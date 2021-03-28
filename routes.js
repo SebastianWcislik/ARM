@@ -23,9 +23,38 @@ app.get("/users", function (req, res) {
 
 app.get("/userToLogin", function (req, res) {
   connection.getConnection(function (err, connection) {
-    var username = req.param("username");
+    var email = req.param("email");
     connection.query(
-      "SELECT Id, Name FROM users WHERE Name=" + username, // change to mail
+      "SELECT Id, Name FROM users WHERE Email=" + email,
+      function (error, results, fields) {
+        if (error) throw error;
+
+        res.send(results);
+      }
+    );
+  });
+});
+
+app.get("/getUserInfo", function (req, res) {
+  connection.getConnection(function (err, connection) {
+    var email = req.param("email");
+    connection.query(
+      "SELECT Name, Email FROM users WHERE Email=" + email,
+      function (error, results, fields) {
+        if (error) throw error;
+
+        res.send(results);
+      }
+    );
+  });
+});
+
+app.get("/getPassword", function (req, res) {
+  connection.getConnection(function (err, connection) {
+    var email = req.param("email");
+    var pass = req.param("password");
+    connection.query(
+      "Select sys.f_checkPassword(" + email + ", " + pass + ") as result",
       function (error, results, fields) {
         if (error) throw error;
 
@@ -39,19 +68,3 @@ app.get("/userToLogin", function (req, res) {
 app.listen(3000, () => {
   console.log("Server Running");
 });
-
-////////////////////////////////////////
-
-// const MySqlConnection = require("react-native-my-sql-connection");
-
-// let config = {
-//   host: "hostname",
-//   database: "sys",
-//   user: "admin",
-//   password: "asdasdasd",
-//   port: 3000,
-// };
-
-// const connection = MySqlConnection.createConnection(config);
-// let res = connection.executeQuery("SELECT * FROM users");
-// connection.close();

@@ -14,32 +14,37 @@ const mockFailure = (value) => {
   });
 };
 
-export function login(username, password, resUser) {
+export function login(email, password) {
   //console.log(username, password, resUser);
   // do zrobienia zamienić na wywoływanie procedury porównującej hasła w bazie
   var result = fetch(
-    serwerAdress + "/userToLogin?username=" + '"' + username + '"'
+    serwerAdress +
+      "/getPassword?email=" +
+      '"' +
+      email +
+      '"' +
+      "&password=" +
+      '"' +
+      password +
+      '"'
   )
     .then((response) => response.json())
     .then((json) => {
-      if (username == json[0].Name.toString()) {
-        return mockFailure({
-          error: 500,
-          message: "Wpisano złe hasło, spróbuj ponownie",
-        });
-      }
-      if (username != json[0].Name.toString()) {
+      if (json[0].result == 1)
         return mockSuccess({
-          id: resUser[0].Id,
-          auth_token: "successful_fake_token",
+          loggedUser: email,
+          result: json[0],
+          message: "Success",
         });
-      }
+      else if (json[0].result == 0)
+        return mockFailure({ message: "Wpisano złe hasło, spróbuj ponownie" });
+      else return mockFailure({ message: "Błąd serwera" });
     });
 
   return result;
 }
 
-export const createAccount = (email, password, shouldSucceed = true) => {
+export function createAccount(email, password, shouldSucceed = true) {
   console.log(email, password);
 
   if (!shouldSucceed) {
@@ -47,4 +52,4 @@ export const createAccount = (email, password, shouldSucceed = true) => {
   }
 
   return mockSuccess({ auth_token: "successful_fake_token" });
-};
+}

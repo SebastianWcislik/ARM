@@ -4,7 +4,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { render } from "react-dom";
 import { login } from "./API/mock";
-import { setToken } from "./API/token";
+import { getToken, setToken } from "./API/token";
 import {
   StyleSheet,
   Text,
@@ -58,11 +58,11 @@ export default function App() {
 
 export function ARMLogin({ navigation }) {
   // Zmienne do logowania
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [resUser, setResUser] = useState([]);
 
-  // odpowiedź z API - errorHandler
+  // Odpowiedź z API - errorHandler
   const [errMessage, setErrMessage] = useState("");
 
   // Pokazywanie/ukrywanie przycisków do logowania
@@ -72,9 +72,9 @@ export function ARMLogin({ navigation }) {
   const loginUser = () => {
     setErrMessage("");
 
-    login(username, password, resUser)
+    login(email, password, resUser)
       .then(async (res) => {
-        await setToken(res.auth_token);
+        await setToken(res.loggedUser);
         navigation.navigate("ARM", { name: "ARM" });
       })
       .catch((err) => setErrMessage(err.message));
@@ -85,7 +85,7 @@ export function ARMLogin({ navigation }) {
   const getLoginUser = () => {
     setErrMessage("");
 
-    fetch(serwerAdress + "/userToLogin?username=" + '"' + username + '"')
+    fetch(serwerAdress + "/userToLogin?email=" + '"' + email + '"')
       .then((response) => response.json())
       .then((json) => {
         if (json[0] == undefined || json[0] == "undefined") {
@@ -108,8 +108,8 @@ export function ARMLogin({ navigation }) {
           editable={shouldDisable}
           style={styles.textInputStyle}
           placeholder="Nazwa użytkownika"
-          value={username}
-          onChangeText={(val) => setUsername(val)}
+          value={email}
+          onChangeText={(val) => setEmail(val)}
         />
         {shouldShow ? (
           <View>
@@ -117,10 +117,11 @@ export function ARMLogin({ navigation }) {
               style={styles.textInputStyle}
               placeholder="Hasło"
               value={password}
+              secureTextEntry={true}
               onChangeText={(val) => setPassword(val)}
             />
             <TouchableOpacity
-              style={navigationStyle.navigationButton}
+              style={navigationStyle.loginButton}
               onPress={loginUser}
             >
               <Text style={navigationStyle.navigationButtonText}>Zaloguj</Text>
@@ -128,7 +129,7 @@ export function ARMLogin({ navigation }) {
           </View>
         ) : (
           <TouchableOpacity
-            style={navigationStyle.navigationButton}
+            style={navigationStyle.loginButton}
             onPress={getLoginUser}
           >
             <Text style={navigationStyle.navigationButtonText}>Zaloguj</Text>
@@ -148,6 +149,7 @@ export function ARMLogin({ navigation }) {
 
 export function ARMUsersList({ navigation }) {
   const [Users, setUsers] = useState([]); // lista użytkowników
+  const [loggedUser, setLoggedUser] = useState("");
 
   const GetList = () => {
     fetch(serwerAdress + "/users")
@@ -157,8 +159,21 @@ export function ARMUsersList({ navigation }) {
       });
   };
 
+  const GetLoggedUser = () => {
+    getToken().then((res) => setLoggedUser(res));
+  };
+
+  // onScreenLoad
+  useEffect(() => {
+    GetLoggedUser();
+    GetList();
+  }, []);
+
   return (
     <SafeAreaView style={styles.body}>
+      <Text style={styles.loggedUserStyle}>
+        Zalogowany jako, {loggedUser ? loggedUser : null}
+      </Text>
       <View style={styles.container}>
         <Text style={styles.title}>Aplikacja Ratowników Mazowsza</Text>
         <View style={styles.usersList}>
@@ -226,10 +241,38 @@ export function ARMUsersList({ navigation }) {
 // Mój profil
 
 export function ARMMyProfile({ navigation }) {
+  const [loggedUser, setLoggedUser] = useState("");
+
+  const [userName, setUserName] = useState("");
+  const [userEmail, setUserEmail] = useState("");
+
+  const GetLoggedUser = () => {
+    getToken().then((res) => {
+      setLoggedUser(res);
+      fetch(serwerAdress + "/getUserInfo?email=" + '"' + res + '"')
+        .then((response) => response.json())
+        .then((json) => {
+          setUserName(json[0].Name);
+          setUserEmail(json[0].Email);
+        });
+    });
+  };
+
+  useEffect(() => {
+    GetLoggedUser();
+  }, []);
+
   return (
     <SafeAreaView style={styles.body}>
+      <Text style={styles.loggedUserStyle}>
+        Zalogowany jako, {loggedUser ? loggedUser : null}
+      </Text>
       <View>
         <Text style={styles.title}>Mój profil</Text>
+        <View>
+          <Text>Imię: {userName ? userName : null}</Text>
+          <Text>Email: {userEmail ? userEmail : null}</Text>
+        </View>
         <TouchableOpacity
           style={navigationStyle.navigationButton}
           onPress={() => navigation.navigate("ARM", { name: "ARM" })}
@@ -296,6 +339,11 @@ const styles = StyleSheet.create({
     position: "relative",
     width: 200,
   },
+  loggedUserStyle: {
+    position: "absolute",
+    top: 20,
+    left: 0,
+  },
 });
 
 const states = StyleSheet.create({
@@ -317,6 +365,12 @@ const navigationStyle = StyleSheet.create({
     justifyContent: "center",
   },
   navigationButton: {
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 10,
+    backgroundColor: "#0064C8",
+  },
+  loginButton: {
     alignItems: "center",
     justifyContent: "center",
     padding: 10,
