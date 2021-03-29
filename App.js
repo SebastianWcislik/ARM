@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from "react";
 import "react-native-gesture-handler";
-import { NavigationContainer } from "@react-navigation/native";
+import {
+  getFocusedRouteNameFromRoute,
+  NavigationContainer,
+} from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { render } from "react-dom";
 import { login } from "./API/mock";
 import { getToken, setToken } from "./API/token";
+import { Picker } from "@react-native-picker/picker";
 import {
   StyleSheet,
   Text,
@@ -46,6 +50,11 @@ export default function App() {
           name="Mój profil"
           component={ARMMyProfile}
           options={({ title: "Mój profil" }, { headerShown: false })}
+        />
+        <Stack.Screen
+          name="Zmiana hasła"
+          component={ARMChangePassword}
+          options={({ title: "Zmiana hasła" }, { headerShown: false })}
         />
       </Stack.Navigator>
     </NavigationContainer>
@@ -137,7 +146,7 @@ export function ARMLogin({ navigation }) {
         )}
         {errMessage ? (
           <View style={styles.errMessageStyle}>
-            <Text>{errMessage}</Text>
+            <Text style={styles.errMessageColor}>{errMessage}</Text>
           </View>
         ) : null}
       </View>
@@ -185,13 +194,12 @@ export function ARMUsersList({ navigation }) {
               <View>
                 {item.State == 1 ? (
                   <Text style={styles.users}>
-                    {item.Name} -{" "}
-                    <Text style={states.unavailable}>Niedostępny</Text>
+                    {item.Name} - <Text style={states.available}>Dostępny</Text>
                   </Text>
                 ) : item.State == 2 ? (
                   <Text style={styles.users}>
                     {item.Name} - {""}
-                    <Text style={states.available}>Dostępny</Text>
+                    <Text style={states.unavailable}>Niedostępny</Text>
                   </Text>
                 ) : item.State == 3 ? (
                   <Text style={styles.users}>
@@ -246,6 +254,9 @@ export function ARMMyProfile({ navigation }) {
   const [userName, setUserName] = useState("");
   const [userEmail, setUserEmail] = useState("");
 
+  const [currentState, setCurrentState] = useState("");
+  const [selectedState, setSelectedState] = useState(1);
+
   const GetLoggedUser = () => {
     getToken().then((res) => {
       setLoggedUser(res);
@@ -254,8 +265,23 @@ export function ARMMyProfile({ navigation }) {
         .then((json) => {
           setUserName(json[0].Name);
           setUserEmail(json[0].Email);
+          setCurrentState(json[0].State);
         });
     });
+  };
+
+  const SetUserState = () => {
+    fetch(
+      serwerAdress +
+        "/getUserState?email=" +
+        '"' +
+        userEmail +
+        '"' +
+        "&state=" +
+        '"' +
+        selectedState +
+        '"'
+    ).then(GetLoggedUser);
   };
 
   useEffect(() => {
@@ -270,17 +296,206 @@ export function ARMMyProfile({ navigation }) {
       <View>
         <Text style={styles.title}>Mój profil</Text>
         <View>
-          <Text>Imię: {userName ? userName : null}</Text>
-          <Text>Email: {userEmail ? userEmail : null}</Text>
-        </View>
-        <TouchableOpacity
-          style={navigationStyle.navigationButton}
-          onPress={() => navigation.navigate("ARM", { name: "ARM" })}
-        >
-          <Text style={navigationStyle.navigationButtonText}>
-            Powrót do listy
+          <Text style={myProfile.myData}>
+            Imię: {userName ? userName : null}
           </Text>
-        </TouchableOpacity>
+          <Text style={myProfile.myData}>
+            Email: {userEmail ? userEmail : null}
+          </Text>
+          <Text style={myProfile.myState}>
+            Twój obecny status to:{" "}
+            {currentState == 1 ? (
+              <Text style={states.available}>Dostępny</Text>
+            ) : currentState == 2 ? (
+              <Text style={states.unavailable}>Niedostępny</Text>
+            ) : currentState == 3 ? (
+              <Text style={states.busy}>Na akcji</Text>
+            ) : null}
+          </Text>
+          <Text style={myProfile.myData}>Zmień swój obecny status na: </Text>
+          <Picker
+            selectedValue={selectedState}
+            style={myProfile.statePicker}
+            onValueChange={(itemValue, itemIndex) =>
+              setSelectedState(itemValue)
+            }
+          >
+            <Picker.Item label="Dostępny" value="1" />
+            <Picker.Item label="Niedostepny" value="2" />
+            <Picker.Item label="Na akcji" value="3" />
+          </Picker>
+          <TouchableOpacity
+            style={navigationStyle.navigationButton}
+            onPress={SetUserState}
+          >
+            <Text style={navigationStyle.navigationButtonText}>
+              Zmień status
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={navigationStyle.navigationButton}
+            onPress={() =>
+              navigation.navigate("Zmiana hasła", { name: "Zmiana hasła" })
+            }
+          >
+            <Text style={navigationStyle.navigationButtonText}>
+              Zmiana hasła
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={navigationStyle.navigationButton}
+            onPress={() => navigation.navigate("ARM", { name: "ARM" })}
+          >
+            <Text style={navigationStyle.navigationButtonText}>
+              Powrót do listy
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </SafeAreaView>
+  );
+}
+
+export function ARMChangePassword({ navigation }) {
+  const [loggedUser, setLoggedUser] = useState("");
+
+  const [userEmail, setUserEmail] = useState("");
+
+  const [shouldShow, setShouldShow] = useState(true);
+  const [errMessage, setErrMessage] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [oldPassword, setOldPassword] = useState("");
+
+  const GetLoggedUser = () => {
+    getToken().then((res) => {
+      setLoggedUser(res);
+      fetch(serwerAdress + "/getUserInfo?email=" + '"' + res + '"')
+        .then((response) => response.json())
+        .then((json) => {
+          setUserEmail(json[0].Email);
+        });
+    });
+  };
+
+  const GetUserPassword = () => {
+    setErrMessage("");
+
+    fetch(
+      serwerAdress +
+        "/getPassword?email=" +
+        '"' +
+        userEmail +
+        '"&password=' +
+        '"' +
+        oldPassword +
+        '"'
+    )
+      .then((response) => response.json())
+      .then((json) => {
+        if (json[0].result == 0) {
+          setErrMessage("Podano złe hasło");
+          setOldPassword("");
+        }
+
+        if (json[0].result == 1) {
+          setShouldShow(!shouldShow);
+        }
+      });
+  };
+
+  const SetUserPassword = () => {
+    setErrMessage("");
+
+    fetch(
+      serwerAdress +
+        "/setPassword?email=" +
+        '"' +
+        userEmail +
+        '"&password=' +
+        '"' +
+        newPassword +
+        '"'
+    )
+      .then((response) => response.json())
+      .then((json) => {
+        if (json[0].result == 0) {
+          setErrMessage("Coś poszło nie tak, spróbuj ponownie");
+        }
+
+        if (json[0].result == 1) {
+          setShouldShow(!shouldShow);
+          setNewPassword("");
+          setOldPassword("");
+          setErrMessage("Udało się zmienić hasło");
+        }
+      });
+  };
+
+  useEffect(() => {
+    GetLoggedUser();
+  }, []);
+
+  return (
+    <SafeAreaView style={styles.body} onTouchStart={Keyboard.dismiss}>
+      <Text style={styles.loggedUserStyle}>
+        Zalogowany jako, {loggedUser ? loggedUser : null}
+      </Text>
+      <View>
+        <Text style={styles.title}>Zmiana hasła</Text>
+        <View>
+          {shouldShow ? (
+            <View>
+              <TextInput
+                secureTextEntry={true}
+                style={myProfile.newPasswordText}
+                placeholder="Podaj stare hasło"
+                value={oldPassword}
+                onChangeText={(val) => setOldPassword(val)}
+              />
+              <TouchableOpacity
+                style={navigationStyle.navigationButton}
+                onPress={GetUserPassword}
+              >
+                <Text style={navigationStyle.navigationButtonText}>
+                  Zmień hasło
+                </Text>
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <View>
+              <TextInput
+                secureTextEntry={true}
+                style={myProfile.newPasswordText}
+                placeholder="Podaj nowe hasło"
+                value={newPassword}
+                onChangeText={(val) => setNewPassword(val)}
+              />
+              <TouchableOpacity
+                style={navigationStyle.navigationButton}
+                onPress={SetUserPassword}
+              >
+                <Text style={navigationStyle.navigationButtonText}>
+                  Zmień hasło
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )}
+          {errMessage ? (
+            <View style={styles.errMessageStyle}>
+              <Text style={styles.errMessageColor}>{errMessage}</Text>
+            </View>
+          ) : null}
+          <TouchableOpacity
+            style={navigationStyle.navigationButton}
+            onPress={() =>
+              navigation.navigate("Mój profil", { name: "Mój profil" })
+            }
+          >
+            <Text style={navigationStyle.navigationButtonText}>
+              Powrót do mojego profilu
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </SafeAreaView>
   );
@@ -308,9 +523,7 @@ const styles = StyleSheet.create({
     marginTop: "5%",
   },
   usersList: {
-    marginTop: "5%",
-    marginBottom: 5,
-    height: "68.9%",
+    height: "64.9%",
     alignItems: "center",
   },
   users: {
@@ -338,6 +551,9 @@ const styles = StyleSheet.create({
     padding: 10,
     position: "relative",
     width: 200,
+  },
+  errMessageColor: {
+    color: "orange",
   },
   loggedUserStyle: {
     position: "absolute",
@@ -369,6 +585,7 @@ const navigationStyle = StyleSheet.create({
     justifyContent: "center",
     padding: 10,
     backgroundColor: "#0064C8",
+    marginTop: 10,
   },
   loginButton: {
     alignItems: "center",
@@ -381,5 +598,29 @@ const navigationStyle = StyleSheet.create({
     alignItems: "center",
     fontSize: 15,
     color: "white",
+  },
+});
+
+const myProfile = StyleSheet.create({
+  myData: {
+    fontSize: 16,
+    padding: 2,
+    marginTop: 5,
+    fontWeight: "bold",
+  },
+  myState: {
+    marginTop: 20,
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  statePicker: {
+    backgroundColor: "dodgerblue",
+  },
+  newPasswordText: {
+    height: "12%",
+    width: "95%",
+    margin: 5,
+    marginTop: 15,
+    marginBottom: 5,
   },
 });

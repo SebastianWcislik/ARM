@@ -39,7 +39,22 @@ app.get("/getUserInfo", function (req, res) {
   connection.getConnection(function (err, connection) {
     var email = req.param("email");
     connection.query(
-      "SELECT Name, Email FROM users WHERE Email=" + email,
+      "SELECT Name, Email, State FROM users WHERE Email=" + email,
+      function (error, results, fields) {
+        if (error) throw error;
+
+        res.send(results);
+      }
+    );
+  });
+});
+
+app.get("/getUserState", function (req, res) {
+  connection.getConnection(function (err, connection) {
+    var email = req.param("email");
+    var state = req.param("state");
+    connection.query(
+      "SELECT sys.f_changeState(" + email + ", " + state + ") as result",
       function (error, results, fields) {
         if (error) throw error;
 
@@ -55,6 +70,21 @@ app.get("/getPassword", function (req, res) {
     var pass = req.param("password");
     connection.query(
       "Select sys.f_checkPassword(" + email + ", " + pass + ") as result",
+      function (error, results, fields) {
+        if (error) throw error;
+
+        res.send(results);
+      }
+    );
+  });
+});
+
+app.get("/setPassword", function (req, res) {
+  connection.getConnection(function (err, connection) {
+    var email = req.param("email");
+    var pass = req.param("password");
+    connection.query(
+      "Select sys.f_changePassword(" + email + ", " + pass + ") as result",
       function (error, results, fields) {
         if (error) throw error;
 

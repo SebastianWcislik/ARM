@@ -15,8 +15,6 @@ const mockFailure = (value) => {
 };
 
 export function login(email, password) {
-  //console.log(username, password, resUser);
-  // do zrobienia zamienić na wywoływanie procedury porównującej hasła w bazie
   var result = fetch(
     serwerAdress +
       "/getPassword?email=" +
