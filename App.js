@@ -1,13 +1,9 @@
 import React, { useEffect, useState } from "react";
 import "react-native-gesture-handler";
-import {
-  getFocusedRouteNameFromRoute,
-  NavigationContainer,
-} from "@react-navigation/native";
+import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import { render } from "react-dom";
 import { login } from "./API/mock";
-import { getToken, setToken } from "./API/token";
+import { getToken, setToken, getRoleToken, setRoleToken } from "./API/token";
 import { Picker } from "@react-native-picker/picker";
 import {
   StyleSheet,
@@ -172,10 +168,21 @@ export function ARMUsersList({ navigation }) {
     getToken().then((res) => setLoggedUser(res));
   };
 
+  const GetRoles = () => {
+    getToken().then((res) => {
+      fetch(serwerAdress + "/getRoles?email=" + '"' + res + '"')
+        .then((response) => response.json())
+        .then((json) => {
+          setRoleToken(json[0].Name);
+        });
+    });
+  };
+
   // onScreenLoad
   useEffect(() => {
     GetLoggedUser();
     GetList();
+    GetRoles();
   }, []);
 
   return (
@@ -213,6 +220,7 @@ export function ARMUsersList({ navigation }) {
                 )}
               </View>
             )}
+            keyExtractor={(item, index) => index.toString()}
           />
         </View>
         <View style={styles.refreshbutton}>
@@ -221,7 +229,7 @@ export function ARMUsersList({ navigation }) {
             onPress={GetList}
           >
             <Text style={navigationStyle.navigationButtonText}>
-              Wyświetl/Odśwież listę
+              Odśwież listę
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
@@ -253,6 +261,7 @@ export function ARMMyProfile({ navigation }) {
 
   const [userName, setUserName] = useState("");
   const [userEmail, setUserEmail] = useState("");
+  const [userRole, setUserRole] = useState("");
 
   const [currentState, setCurrentState] = useState("");
   const [selectedState, setSelectedState] = useState(1);
@@ -284,8 +293,13 @@ export function ARMMyProfile({ navigation }) {
     ).then(GetLoggedUser);
   };
 
+  const GetUserRole = () => {
+    getRoleToken().then((res) => setUserRole(res));
+  };
+
   useEffect(() => {
     GetLoggedUser();
+    GetUserRole();
   }, []);
 
   return (
@@ -301,6 +315,9 @@ export function ARMMyProfile({ navigation }) {
           </Text>
           <Text style={myProfile.myData}>
             Email: {userEmail ? userEmail : null}
+          </Text>
+          <Text style={myProfile.myData}>
+            Rola: {userRole ? userRole : null}
           </Text>
           <Text style={myProfile.myState}>
             Twój obecny status to:{" "}
