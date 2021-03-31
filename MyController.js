@@ -114,6 +114,47 @@ app.get("/getRoles", function (req, res) {
   });
 });
 
+// GET is there user
+app.get("/isThereUser", function (req, res) {
+  connection.getConnection(function (err, connection) {
+    var email = req.param("email");
+    connection.query(
+      "Select sys.f_checkIsThereUser(" + email + ") as result",
+      function (error, results, fields) {
+        if (error) throw error;
+
+        res.send(results);
+      }
+    );
+  });
+});
+
+// GET create new user
+app.get("/createUser", function (req, res) {
+  connection.getConnection(function (err, connection) {
+    var email = req.param("email");
+    var pass = req.param("password");
+    var name = req.param("name");
+    var role = req.param("role");
+    connection.query(
+      "Select sys.f_createUser(" +
+        email +
+        ", " +
+        name +
+        ", " +
+        pass +
+        ", " +
+        role +
+        ") as result",
+      function (error, results, fields) {
+        if (error) throw error;
+
+        res.send(results);
+      }
+    );
+  });
+});
+
 // Starting our server.
 app.listen(3000, () => {
   console.log("Server Running");
