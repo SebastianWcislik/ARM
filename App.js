@@ -613,9 +613,15 @@ export function ARMUserRegistration({ navigation }) {
             "Wystąpił błąd w trakcie tworzenia użytkownika, spróbuj ponownie"
           );
 
-        if (json[0].result == 1)
+        if (json[0].result == 1) {
           setErrMessage("Udało się utworzyć nowego użytkownika");
+          sendRegistrationEmail();
+        }
       });
+  };
+
+  const sendRegistrationEmail = () => {
+    fetch(serwerAdress + "/sendMail?password=" + password + "&email=" + email);
   };
 
   useEffect(() => {

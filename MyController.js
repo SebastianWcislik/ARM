@@ -1,5 +1,6 @@
 const express = require("express");
 const mySql = require("mysql");
+const nodemailer = require("nodemailer");
 
 const connection = mySql.createPool({
   host: "localhost", // Adress to your database (localhost)
@@ -152,6 +153,31 @@ app.get("/createUser", function (req, res) {
         res.send(results);
       }
     );
+  });
+});
+
+app.get("/sendMail", function (req, res) {
+  var pass = req.param("password");
+  var email = req.param("email");
+
+  // TODO: Ustawić poprawny email do wysyłania potwierdzeń
+  let transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 587,
+    secure: false,
+    auth: {
+      user: "",
+      pass: "",
+    },
+  });
+
+  let info = transporter.sendMail({
+    from: "", // TODO: wpisać poprawny adres do wysyłania maili
+    to: email,
+    subject: "Rejestracja Nowego Użytkownika",
+    html:
+      "<h1>Rejestracja użytkownika powiodła się</h1><br /><b>Zalogujesz się poprzez podanie swojego maila <br />Twoje tymczasowe hasło to: </b>" +
+      pass, // TODO: Sprecyzować wiadomość
   });
 });
 
