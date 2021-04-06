@@ -37,3 +37,22 @@ export const setRoleToken = async (token) => {
     return null;
   }
 };
+
+export const getEmailToken = async () => {
+  try {
+    const value = await AsyncStorage.getItem("@email_token");
+    if (value !== null) {
+      return value;
+    }
+  } catch (e) {
+    return null;
+  }
+};
+
+export const setEmailToken = async (token) => {
+  try {
+    await AsyncStorage.setItem("@email_token", token);
+  } catch (e) {
+    return null;
+  }
+};

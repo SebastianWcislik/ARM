@@ -3,7 +3,14 @@ import "react-native-gesture-handler";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { login } from "./API/mock";
-import { getToken, setToken, getRoleToken, setRoleToken } from "./API/token";
+import {
+  getToken,
+  setToken,
+  getRoleToken,
+  setRoleToken,
+  getEmailToken,
+  setEmailToken,
+} from "./API/token";
 import { Picker } from "@react-native-picker/picker";
 import {
   StyleSheet,
@@ -56,6 +63,11 @@ export default function App() {
           name="Rejestracja"
           component={ARMUserRegistration}
           options={({ title: "Rejestracja" }, { headerShown: false })}
+        />
+        <Stack.Screen
+          name="Informacje o Użytkowniku"
+          component={ARMUserDetails}
+          options={({ title: "Informacje" }, { headerShown: false })}
         />
       </Stack.Navigator>
     </NavigationContainer>
@@ -183,6 +195,11 @@ export function ARMUsersList({ navigation }) {
     });
   };
 
+  const GetUserDetails = (email) => {
+    setEmailToken(email);
+    navigation.navigate("Informacje o Użytkowniku", { name: "Informacje" });
+  };
+
   // onScreenLoad
   useEffect(() => {
     GetLoggedUser();
@@ -205,16 +222,28 @@ export function ARMUsersList({ navigation }) {
             renderItem={({ item }) => (
               <View>
                 {item.State == 1 ? (
-                  <Text style={styles.users}>
-                    {item.Name} - <Text style={states.available}>Dostępny</Text>
-                  </Text>
+                  <TouchableOpacity>
+                    <Text
+                      style={styles.users}
+                      onPress={() => GetUserDetails(item.Email)}
+                    >
+                      {item.Name} -{" "}
+                      <Text style={states.available}>Dostępny</Text>
+                    </Text>
+                  </TouchableOpacity>
                 ) : item.State == 2 ? (
-                  <Text style={styles.users}>
+                  <Text
+                    style={styles.users}
+                    onPress={() => GetUserDetails(item.Email)}
+                  >
                     {item.Name} - {""}
                     <Text style={states.unavailable}>Niedostępny</Text>
                   </Text>
                 ) : item.State == 3 ? (
-                  <Text style={styles.users}>
+                  <Text
+                    style={styles.users}
+                    onPress={() => GetUserDetails(item.Email)}
+                  >
                     {item.Name} - {""}
                     <Text style={states.busy}>Na akcji</Text>
                   </Text>
@@ -713,6 +742,74 @@ export function ARMUserRegistration({ navigation }) {
           >
             <Text style={navigationStyle.navigationButtonText}>
               Powrót do mojego profilu
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </SafeAreaView>
+  );
+}
+
+export function ARMUserDetails({ navigation }) {
+  const [loggedUser, setLoggedUser] = useState("");
+
+  const [userName, setUserName] = useState("");
+  const [userEmail, setUserEmail] = useState("");
+  const [userRole, setUserRole] = useState("");
+  const [currentState, setCurrentState] = useState("");
+
+  const GetSelectedUserInfo = () => {
+    getEmailToken().then((res) => {
+      setLoggedUser(res);
+      fetch(serwerAdress + "/getSelectedUserInfo?email=" + '"' + res + '"')
+        .then((response) => response.json())
+        .then((json) => {
+          setUserName(json[0].Name);
+          setUserEmail(json[0].Email);
+          setCurrentState(json[0].State);
+          setUserRole(json[0].RoleName);
+        });
+    });
+  };
+
+  useEffect(() => {
+    GetSelectedUserInfo();
+  }, []);
+
+  return (
+    <SafeAreaView style={styles.body}>
+      <Text style={styles.loggedUserStyle}>
+        Zalogowany jako, {loggedUser ? loggedUser : null}
+      </Text>
+      <View>
+        <Text style={styles.title}>Informacje o Użytkowniku</Text>
+        <View>
+          <Text style={myProfile.myData}>
+            Imię: {userName ? userName : null}
+          </Text>
+          <Text style={myProfile.myData}>
+            Email: {userEmail ? userEmail : null}
+          </Text>
+          <Text style={myProfile.myData}>
+            Rola: {userRole ? userRole : null}
+          </Text>
+          <Text style={myProfile.myData}>
+            Status:{" "}
+            {currentState == 1 ? (
+              <Text style={states.available}>Dostępny</Text>
+            ) : currentState == 2 ? (
+              <Text style={states.unavailable}>Niedostępny</Text>
+            ) : currentState == 3 ? (
+              <Text style={states.busy}>Na akcji</Text>
+            ) : null}
+          </Text>
+
+          <TouchableOpacity
+            style={navigationStyle.navigationButton}
+            onPress={() => navigation.navigate("ARM", { name: "ARM" })}
+          >
+            <Text style={navigationStyle.navigationButtonText}>
+              Powrót do listy
             </Text>
           </TouchableOpacity>
         </View>

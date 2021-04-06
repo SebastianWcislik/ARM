@@ -52,6 +52,21 @@ app.get("/getUserInfo", function (req, res) {
   });
 });
 
+// GET Specific user's Info by email
+app.get("/getSelectedUserInfo", function (req, res) {
+  connection.getConnection(function (err, connection) {
+    var email = req.param("email");
+    connection.query(
+      "SELECT * FROM sys.v_userdetails WHERE Email=" + email,
+      function (error, results, fields) {
+        if (error) throw error;
+
+        res.send(results);
+      }
+    );
+  });
+});
+
 // GET change user's state by email
 app.get("/getUserState", function (req, res) {
   connection.getConnection(function (err, connection) {
