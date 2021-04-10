@@ -758,9 +758,14 @@ export function ARMUserDetails({ navigation }) {
   const [userRole, setUserRole] = useState("");
   const [currentState, setCurrentState] = useState("");
 
+  const GetLoggedUser = () => {
+    getToken().then((res) => {
+      setLoggedUser(res);
+    });
+  };
+
   const GetSelectedUserInfo = () => {
     getEmailToken().then((res) => {
-      setLoggedUser(res);
       fetch(serwerAdress + "/getSelectedUserInfo?email=" + '"' + res + '"')
         .then((response) => response.json())
         .then((json) => {
@@ -773,6 +778,7 @@ export function ARMUserDetails({ navigation }) {
   };
 
   useEffect(() => {
+    GetLoggedUser();
     GetSelectedUserInfo();
   }, []);
 
@@ -850,13 +856,7 @@ const styles = StyleSheet.create({
   },
   refreshbutton: {
     marginTop: "5%",
-  },
-  button: {
-    alignItems: "center",
-    fontSize: 15,
-    backgroundColor: "lightblue",
-    padding: 10,
-    minWidth: 100,
+    borderRadius: 5,
   },
   textInputStyle: {
     height: "10%",
@@ -903,6 +903,7 @@ const navigationStyle = StyleSheet.create({
     padding: 10,
     backgroundColor: "#0064C8",
     marginTop: 10,
+    borderRadius: 5,
   },
   loginButton: {
     alignItems: "center",
@@ -910,6 +911,7 @@ const navigationStyle = StyleSheet.create({
     padding: 10,
     backgroundColor: "#0064C8",
     width: 200,
+    borderRadius: 5,
   },
   navigationButtonText: {
     alignItems: "center",
