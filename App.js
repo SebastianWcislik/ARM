@@ -3,6 +3,7 @@ import "react-native-gesture-handler";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { login } from "./API/mock";
+import Moment from "moment";
 import {
   getToken,
   setToken,
@@ -68,6 +69,11 @@ export default function App() {
           name="Informacje o Użytkowniku"
           component={ARMUserDetails}
           options={({ title: "Informacje" }, { headerShown: false })}
+        />
+        <Stack.Screen
+          name="Wydarzenia"
+          component={ARMEvents}
+          options={({ title: "Wydarzenia" }, { headerShown: false })}
         />
       </Stack.Navigator>
     </NavigationContainer>
@@ -213,7 +219,7 @@ export function ARMUsersList({ navigation }) {
         Zalogowany jako, {loggedUser ? loggedUser : null}
       </Text>
       <View style={styles.container}>
-        <Text style={styles.title}>Aplikacja Ratowników Mazowsza</Text>
+        <Text style={styles.ARMtitle}>Aplikacja Ratowników Mazowsza</Text>
         <View style={styles.usersList}>
           <FlatList
             showsVerticalScrollIndicator={false}
@@ -265,6 +271,14 @@ export function ARMUsersList({ navigation }) {
             <Text style={navigationStyle.navigationButtonText}>
               Odśwież listę
             </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={navigationStyle.navigationButton}
+            onPress={() =>
+              navigation.navigate("Wydarzenia", { name: "Wydarzenia" })
+            }
+          >
+            <Text style={navigationStyle.navigationButtonText}>Wydarzenia</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={navigationStyle.navigationButton}
@@ -824,6 +838,99 @@ export function ARMUserDetails({ navigation }) {
   );
 }
 
+// Wydarzenia
+
+export function ARMEvents({ navigation }) {
+  const [Events, setEvents] = useState([]); // lista wydarzeń
+  const [loggedUser, setLoggedUser] = useState("");
+
+  const GetEvents = () => {
+    fetch(serwerAdress + "/events")
+      .then((response) => response.json())
+      .then((json) => {
+        setEvents(json);
+      });
+  };
+
+  const GetLoggedUser = () => {
+    getToken().then((res) => setLoggedUser(res));
+  };
+
+  // const GetRoles = () => {
+  //   getToken().then((res) => {
+  //     fetch(serwerAdress + "/getRoles?email=" + '"' + res + '"')
+  //       .then((response) => response.json())
+  //       .then((json) => {
+  //         setRoleToken(json[0].Name);
+  //       });
+  //   });
+  // };
+
+  const GetEventDetails = (email) => {
+    setEmailToken(email);
+    navigation.navigate("Informacje o Użytkowniku", { name: "Informacje" });
+  };
+
+  useEffect(() => {
+    GetLoggedUser();
+    GetEvents();
+    Moment.locale("pl");
+    //GetRoles();
+  }, []);
+
+  return (
+    <SafeAreaView style={styles.body}>
+      <Text style={styles.loggedUserStyle}>
+        Zalogowany jako, {loggedUser ? loggedUser : null}
+      </Text>
+      <View style={styles.container}>
+        <Text style={styles.title}>Lista wydarzeń</Text>
+        <View style={styles.eventsList}>
+          <FlatList
+            showsVerticalScrollIndicator={false}
+            showsHorizontalScrollIndicator={false}
+            data={Events}
+            renderItem={({ item }) => (
+              <View style={styles.marginTop15}>
+                <TouchableOpacity>
+                  <Text
+                    style={styles.events}
+                    //onPress={() => GetUserDetails(item.Email)}
+                  >
+                    {item.Name}
+                    {"\n"}
+                    {Moment(item.DateFrom).format("DD-MM-yyyy hh:mm")}
+                    {"\n"}
+                    {Moment(item.DateTo).format("DD-MM-yyyy hh:mm")}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            )}
+            keyExtractor={(item, index) => index.toString()}
+          />
+        </View>
+        <View style={styles.refreshbutton}>
+          <TouchableOpacity
+            style={navigationStyle.navigationButton}
+            onPress={GetEvents}
+          >
+            <Text style={navigationStyle.navigationButtonText}>
+              Odśwież listę wydarzeń
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={navigationStyle.navigationButton}
+            onPress={() => navigation.navigate("ARM", { name: "ARM" })}
+          >
+            <Text style={navigationStyle.navigationButtonText}>
+              Powrót do listy użytkowników
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </SafeAreaView>
+  );
+}
 // Style kaskadowe do listy użytkowników
 
 const styles = StyleSheet.create({
@@ -836,6 +943,14 @@ const styles = StyleSheet.create({
   },
   container: {
     height: "80%",
+  },
+  ARMtitle: {
+    marginLeft: "auto",
+    marginRight: "auto",
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: "5%",
+    marginTop: "-5%",
   },
   title: {
     marginLeft: "auto",
@@ -851,6 +966,17 @@ const styles = StyleSheet.create({
   },
   users: {
     alignItems: "center",
+    fontSize: 18,
+    marginTop: 20,
+  },
+  eventsList: {
+    height: "64.9%",
+    alignItems: "center",
+  },
+  events: {
+    justifyContent: "center",
+    marginLeft: "auto",
+    marginRight: "auto",
     fontSize: 18,
     marginTop: 20,
   },
@@ -876,6 +1002,9 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 20,
     left: 0,
+  },
+  marginTop15: {
+    marginTop: 15,
   },
 });
 

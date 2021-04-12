@@ -22,6 +22,17 @@ app.get("/users", function (req, res) {
   });
 });
 
+// GET All events from database
+app.get("/events", function (req, res) {
+  connection.getConnection(function (err, connection) {
+    connection.query("SELECT * FROM events", function (error, results, fields) {
+      if (error) throw error;
+
+      res.send(results);
+    });
+  });
+});
+
 // GET Specific user's Id and Name by email
 app.get("/userToLogin", function (req, res) {
   connection.getConnection(function (err, connection) {
