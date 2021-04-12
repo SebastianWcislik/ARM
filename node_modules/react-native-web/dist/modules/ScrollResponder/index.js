@@ -366,18 +366,6 @@ var ScrollResponderMixin = {
   },
 
   /**
-   * Deprecated, do not use.
-   */
-  scrollResponderScrollWithoutAnimationTo: function scrollResponderScrollWithoutAnimationTo(offsetX, offsetY) {
-    console.warn('`scrollResponderScrollWithoutAnimationTo` is deprecated. Use `scrollResponderScrollTo` instead');
-    this.scrollResponderScrollTo({
-      x: offsetX,
-      y: offsetY,
-      animated: false
-    });
-  },
-
-  /**
    * A helper function to zoom to a specific rect in the scrollview. The argument has the shape
    * {x: number; y: number; width: number; height: number; animated: boolean = true}
    *

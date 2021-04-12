@@ -33,7 +33,7 @@ const serwerAdress = "http://192.168.0.27:3000"; // baza danych
 export default function App() {
   // Deklaracja zmiennych
 
-  const Stack = createStackNavigator(); // menu nawigacyjne
+  const Stack = createStackNavigator();
 
   // Menu nawigacyjne
 
