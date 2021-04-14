@@ -28,6 +28,6 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "description": "Aplikacja Ratowników Mazowsza"
+    "description": "Aplikacja Ratowników Mazowsza\nWersja Developerska\n© Sebastian Wciślik 2021"
   }
 }
