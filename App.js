@@ -4,6 +4,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { login } from "./API/mock";
 import Moment from "moment";
+import { vw, vh } from "react-native-viewport-units";
 import {
   getToken,
   setToken,
@@ -13,6 +14,7 @@ import {
   setEmailToken,
 } from "./API/token";
 import { Picker } from "@react-native-picker/picker";
+import DropDownPicker from "react-native-dropdown-picker";
 import {
   StyleSheet,
   Text,
@@ -378,17 +380,18 @@ export function ARMMyProfile({ navigation }) {
             ) : null}
           </Text>
           <Text style={myProfile.myData}>Zmień swój obecny status na: </Text>
-          <Picker
-            selectedValue={selectedState}
+          <DropDownPicker
+            items={[
+              { label: "Dostępny", value: 1 },
+              { label: "Niedostępny", value: 2 },
+              { label: "Na akcji", value: 3 },
+            ]}
+            containerStyle={{ height: 6 * vh }}
+            defaultValue={selectedState}
             style={myProfile.statePicker}
-            onValueChange={(itemValue, itemIndex) =>
-              setSelectedState(itemValue)
-            }
-          >
-            <Picker.Item label="Dostępny" value="1" />
-            <Picker.Item label="Niedostepny" value="2" />
-            <Picker.Item label="Na akcji" value="3" />
-          </Picker>
+            dropDownStyle={{ backgroundColor: "dodgerblue" }}
+            onChangeItem={(itemValue) => setSelectedState(itemValue.value)}
+          />
           <TouchableOpacity
             style={navigationStyle.navigationButton}
             onPress={SetUserState}
@@ -931,7 +934,8 @@ export function ARMEvents({ navigation }) {
     </SafeAreaView>
   );
 }
-// Style kaskadowe do listy użytkowników
+
+// Css Styles
 
 const styles = StyleSheet.create({
   body: {
@@ -942,12 +946,12 @@ const styles = StyleSheet.create({
     backgroundColor: "dodgerblue",
   },
   container: {
-    height: "80%",
+    height: 70 * vh,
   },
   ARMtitle: {
     marginLeft: "auto",
     marginRight: "auto",
-    fontSize: 20,
+    fontSize: 2.5 * vh,
     fontWeight: "bold",
     marginBottom: "5%",
     marginTop: "-5%",
@@ -955,29 +959,29 @@ const styles = StyleSheet.create({
   title: {
     marginLeft: "auto",
     marginRight: "auto",
-    fontSize: 20,
+    fontSize: 2.5 * vh,
     fontWeight: "bold",
     marginBottom: "5%",
     marginTop: "5%",
   },
   usersList: {
-    height: "64.9%",
+    height: 40 * vh,
     alignItems: "center",
   },
   users: {
     alignItems: "center",
-    fontSize: 18,
+    fontSize: 2.3 * vh,
     marginTop: 20,
   },
   eventsList: {
-    height: "64.9%",
+    height: 45 * vh,
     alignItems: "center",
   },
   events: {
     justifyContent: "center",
     marginLeft: "auto",
     marginRight: "auto",
-    fontSize: 18,
+    fontSize: 2 * vh,
     marginTop: 20,
   },
   refreshbutton: {
@@ -985,7 +989,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   textInputStyle: {
-    height: "10%",
+    height: 5 * vh,
     width: "95%",
     margin: 5,
     marginBottom: 15,
@@ -1002,6 +1006,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 20,
     left: 0,
+    fontSize: 1.5 * vh,
   },
   marginTop15: {
     marginTop: 15,
@@ -1029,7 +1034,7 @@ const navigationStyle = StyleSheet.create({
   navigationButton: {
     alignItems: "center",
     justifyContent: "center",
-    padding: 10,
+    padding: 1 * vh,
     backgroundColor: "#0064C8",
     marginTop: 10,
     borderRadius: 5,
@@ -1037,36 +1042,35 @@ const navigationStyle = StyleSheet.create({
   loginButton: {
     alignItems: "center",
     justifyContent: "center",
-    padding: 10,
+    padding: 1 * vh,
     backgroundColor: "#0064C8",
     width: 200,
     borderRadius: 5,
   },
   navigationButtonText: {
     alignItems: "center",
-    fontSize: 15,
+    fontSize: 2 * vh,
     color: "white",
   },
 });
 
 const myProfile = StyleSheet.create({
   myData: {
-    fontSize: 16,
+    fontSize: 2 * vh,
     padding: 2,
     marginTop: 5,
     fontWeight: "bold",
   },
   myState: {
     marginTop: 20,
-    fontSize: 16,
+    fontSize: 2 * vh,
     fontWeight: "bold",
   },
   statePicker: {
     backgroundColor: "dodgerblue",
-    marginTop: 10,
   },
   newPasswordText: {
-    height: "12%",
+    height: 5 * vh,
     width: "95%",
     margin: 5,
     marginTop: 15,

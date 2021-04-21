@@ -12,3 +12,5 @@ yarn.lock
 yarn-error.log
 yarn-debug.log*
 npm-debug.log*
+react-native-viewport-units
+react-native-safe-area-context
