@@ -12,6 +12,8 @@ import {
   setRoleToken,
   getEmailToken,
   setEmailToken,
+  getEventToken,
+  setEventToken,
 } from "./API/token";
 import { Picker } from "@react-native-picker/picker";
 import DropDownPicker from "react-native-dropdown-picker";
@@ -76,6 +78,13 @@ export default function App() {
           name="Wydarzenia"
           component={ARMEvents}
           options={({ title: "Wydarzenia" }, { headerShown: false })}
+        />
+        <Stack.Screen
+          name="Informacje o Wydarzeniu"
+          component={ARMEventDetails}
+          options={
+            ({ title: "Informacje o Wydarzeniu" }, { headerShown: false })
+          }
         />
       </Stack.Navigator>
     </NavigationContainer>
@@ -869,9 +878,11 @@ export function ARMEvents({ navigation }) {
   //   });
   // };
 
-  const GetEventDetails = (email) => {
-    setEmailToken(email);
-    navigation.navigate("Informacje o Użytkowniku", { name: "Informacje" });
+  const GetEventDetails = (Id) => {
+    setEventToken(Id);
+    navigation.navigate("Informacje o Wydarzeniu", {
+      name: "Informacja o Wydarzeniu",
+    });
   };
 
   useEffect(() => {
@@ -898,7 +909,7 @@ export function ARMEvents({ navigation }) {
                 <TouchableOpacity>
                   <Text
                     style={styles.events}
-                    //onPress={() => GetUserDetails(item.Email)}
+                    onPress={() => GetEventDetails(item.Id)}
                   >
                     {item.Name}
                     {"\n"}
@@ -927,6 +938,83 @@ export function ARMEvents({ navigation }) {
           >
             <Text style={navigationStyle.navigationButtonText}>
               Powrót do listy użytkowników
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </SafeAreaView>
+  );
+}
+
+export function ARMEventDetails({ navigation }) {
+  const [loggedUser, setLoggedUser] = useState("");
+
+  const [eventName, setEventName] = useState("");
+  const [eventLocalization, setEventLokalization] = useState("");
+  const [eventFrom, setEventFrom] = useState("");
+  const [eventTo, setEventTo] = useState("");
+
+  const GetLoggedUser = () => {
+    getToken().then((res) => {
+      setLoggedUser(res);
+    });
+  };
+
+  const GetEventInfo = () => {
+    getEventToken().then((res) =>
+      fetch(serwerAdress + "/eventById?Id=" + res)
+        .then((response) => response.json())
+        .then((json) => {
+          setEventName(json[0].Name);
+          setEventLokalization(json[0].Localization);
+          setEventFrom(json[0].DateFrom);
+          setEventTo(json[0].DateTo);
+        })
+    );
+  };
+
+  useEffect(() => {
+    GetLoggedUser();
+    GetEventInfo();
+  }, []);
+
+  return (
+    <SafeAreaView style={styles.body}>
+      <Text style={styles.loggedUserStyle}>
+        Zalogowany jako, {loggedUser ? loggedUser : null}
+      </Text>
+      <View>
+        <Text style={styles.title}>Informacje o Wydarzeniu</Text>
+        <View>
+          <Text style={myProfile.myData}>
+            Nazwa: {eventName ? eventName : null}
+          </Text>
+          <Text style={myProfile.myData}>
+            Lokalizacja: {eventLocalization ? eventLocalization : null}
+          </Text>
+          <Text style={myProfile.myData}>
+            Od:{" "}
+            {eventFrom ? Moment(eventFrom).format("DD-MM-yyyy hh:mm") : null}
+          </Text>
+          <Text style={myProfile.myData}>
+            Do: {eventTo ? Moment(eventTo).format("DD-MM-yyyy hh:mm") : null}
+          </Text>
+          <TouchableOpacity
+            style={navigationStyle.navigationButton}
+            //onPress={}
+          >
+            <Text style={navigationStyle.navigationButtonText}>
+              Dołącz do wydarzenia
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={navigationStyle.navigationButton}
+            onPress={() =>
+              navigation.navigate("Wydarzenia", { name: "Wydarzenia" })
+            }
+          >
+            <Text style={navigationStyle.navigationButtonText}>
+              Powrót do wydarzeń
             </Text>
           </TouchableOpacity>
         </View>

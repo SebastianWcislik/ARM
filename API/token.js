@@ -56,3 +56,22 @@ export const setEmailToken = async (token) => {
     return null;
   }
 };
+
+export const getEventToken = async () => {
+  try {
+    const value = await AsyncStorage.getItem("@event_token");
+    if (value !== null) {
+      return value;
+    }
+  } catch (e) {
+    return null;
+  }
+};
+
+export const setEventToken = async (token) => {
+  try {
+    await AsyncStorage.setItem("@event_token", token);
+  } catch (e) {
+    return null;
+  }
+};
