@@ -70,7 +70,7 @@ export const getEventToken = async () => {
 
 export const setEventToken = async (token) => {
   try {
-    await AsyncStorage.setItem("@event_token", token);
+    await AsyncStorage.setItem("@event_token", token.toString());
   } catch (e) {
     return null;
   }

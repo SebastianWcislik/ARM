@@ -1095,7 +1095,7 @@ export function ARMEventDetails({ navigation }) {
             {eventTo ? Moment(eventTo).format("DD-MM-yyyy hh:mm") : null}
           </Text>
           <Text style={styles.title}>Osoby biorące udział w wydarzeniu: </Text>
-          <View style={styles.usersList}>
+          <View style={styles.usersInEventList}>
             <FlatList
               showsVerticalScrollIndicator={false}
               showsHorizontalScrollIndicator={false}
@@ -1191,6 +1191,10 @@ const styles = StyleSheet.create({
   },
   usersList: {
     height: 40 * vh,
+    alignItems: "center",
+  },
+  usersInEventList: {
+    height: 26 * vh,
     alignItems: "center",
   },
   users: {
