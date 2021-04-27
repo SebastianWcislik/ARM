@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "react-native-gesture-handler";
-import { NavigationContainer } from "@react-navigation/native";
+import { NavigationContainer, useFocusEffect } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { login } from "./API/mock";
 import Moment from "moment";
@@ -855,6 +855,7 @@ export function ARMUserDetails({ navigation }) {
 export function ARMEvents({ navigation }) {
   const [Events, setEvents] = useState([]); // lista wydarzeń
   const [loggedUser, setLoggedUser] = useState("");
+  const [userRole, setUserRole] = useState("");
 
   const GetEvents = () => {
     fetch(serwerAdress + "/events")
@@ -868,15 +869,9 @@ export function ARMEvents({ navigation }) {
     getToken().then((res) => setLoggedUser(res));
   };
 
-  // const GetRoles = () => {
-  //   getToken().then((res) => {
-  //     fetch(serwerAdress + "/getRoles?email=" + '"' + res + '"')
-  //       .then((response) => response.json())
-  //       .then((json) => {
-  //         setRoleToken(json[0].Name);
-  //       });
-  //   });
-  // };
+  const GetUserRole = () => {
+    getRoleToken().then((res) => setUserRole(res));
+  };
 
   const GetEventDetails = (Id) => {
     setEventToken(Id);
@@ -885,12 +880,14 @@ export function ARMEvents({ navigation }) {
     });
   };
 
-  useEffect(() => {
-    GetLoggedUser();
-    GetEvents();
-    Moment.locale("pl");
-    //GetRoles();
-  }, []);
+  useFocusEffect(
+    React.useCallback(() => {
+      GetLoggedUser();
+      GetEvents();
+      Moment.locale("pl");
+      GetUserRole();
+    }, [])
+  );
 
   return (
     <SafeAreaView style={styles.body}>
@@ -932,6 +929,16 @@ export function ARMEvents({ navigation }) {
               Odśwież listę wydarzeń
             </Text>
           </TouchableOpacity>
+          {userRole == "Admin" || userRole == "Koordynator" ? (
+            <TouchableOpacity
+              style={navigationStyle.navigationButton}
+              onPress={GetEvents}
+            >
+              <Text style={navigationStyle.navigationButtonText}>
+                Dodaj wydarzenie
+              </Text>
+            </TouchableOpacity>
+          ) : null}
           <TouchableOpacity
             style={navigationStyle.navigationButton}
             onPress={() => navigation.navigate("ARM", { name: "ARM" })}
@@ -948,6 +955,13 @@ export function ARMEvents({ navigation }) {
 
 export function ARMEventDetails({ navigation }) {
   const [loggedUser, setLoggedUser] = useState("");
+  const [userRole, setUserRole] = useState("");
+  const [eventId, setEventId] = useState(0);
+  const [errMessage, setErrMessage] = useState("");
+
+  const [UsersInEvents, setUsersInEvents] = useState([]);
+
+  const [shouldShow, setShouldShow] = useState(true);
 
   const [eventName, setEventName] = useState("");
   const [eventLocalization, setEventLokalization] = useState("");
@@ -960,11 +974,18 @@ export function ARMEventDetails({ navigation }) {
     });
   };
 
+  const GetUserRole = () => {
+    getRoleToken().then((res) => {
+      setUserRole(res);
+    });
+  };
+
   const GetEventInfo = () => {
     getEventToken().then((res) =>
       fetch(serwerAdress + "/eventById?Id=" + res)
         .then((response) => response.json())
         .then((json) => {
+          setEventId(json[0].Id);
           setEventName(json[0].Name);
           setEventLokalization(json[0].Localization);
           setEventFrom(json[0].DateFrom);
@@ -973,9 +994,82 @@ export function ARMEventDetails({ navigation }) {
     );
   };
 
+  const GetUsersInEvent = () => {
+    getEventToken().then((res) => {
+      fetch(serwerAdress + "/getUsersInEvent?eventId=" + res)
+        .then((res) => res.json())
+        .then((json) => {
+          setUsersInEvents(json);
+          getToken().then((res) => {
+            for (var i = 0; i < json.length; i++) {
+              if (json[i].Email == res) {
+                setShouldShow(!shouldShow);
+                return;
+              }
+            }
+          });
+        });
+    });
+  };
+
+  const AddToEvent = () => {
+    fetch(serwerAdress + "/getUserInfo?email=" + '"' + loggedUser + '"')
+      .then((res) => res.json())
+      .then((json) => {
+        fetch(
+          serwerAdress +
+            "/addToEvent?userId=" +
+            json[0].Id +
+            "&eventId=" +
+            eventId
+        )
+          .then((json) => json.json())
+          .then((response) => {
+            if (response[0].result == 0)
+              setErrMessage(
+                "Wystąpił błąd w trakcie dołączania do wydarzenia, spróbuj ponownie"
+              );
+            if (response[0].result == 1) {
+              setErrMessage("Udało się dołączyć do wydarzenia");
+              GetUsersInEvent();
+              setShouldShow(!shouldShow);
+            }
+          });
+      });
+  };
+
+  const QuitEvent = () => {
+    fetch(serwerAdress + "/getUserInEvent?Email=" + '"' + loggedUser + '"')
+      .then((res) => res.json())
+      .then((json) =>
+        fetch(serwerAdress + "/deleteFromEvent?Id=" + json[0].Id).then(
+          (response) =>
+            response.json().then((json) => {
+              if (json[0].result == 0)
+                setErrMessage(
+                  "Wystąpił błąd w trakcie opuszczania wydarzenia, spróbuj ponownie"
+                );
+              if (json[0].result == 1) {
+                setErrMessage("Udało się opuścić wydarzenie");
+                GetUsersInEvent();
+                setShouldShow(!shouldShow);
+              }
+            })
+        )
+      );
+  };
+
+  const DeleteEvent = () => {
+    fetch(serwerAdress + "/deleteEvent?eventId=" + eventId).then(() => {
+      navigation.navigate("Wydarzenia", { name: "Wydarzenia" });
+    });
+  };
+
   useEffect(() => {
     GetLoggedUser();
     GetEventInfo();
+    GetUsersInEvent();
+    GetUserRole();
   }, []);
 
   return (
@@ -993,20 +1087,63 @@ export function ARMEventDetails({ navigation }) {
             Lokalizacja: {eventLocalization ? eventLocalization : null}
           </Text>
           <Text style={myProfile.myData}>
-            Od:{" "}
+            Data rozpoczęcia:{" "}
             {eventFrom ? Moment(eventFrom).format("DD-MM-yyyy hh:mm") : null}
           </Text>
           <Text style={myProfile.myData}>
-            Do: {eventTo ? Moment(eventTo).format("DD-MM-yyyy hh:mm") : null}
+            Data zakończenia:{" "}
+            {eventTo ? Moment(eventTo).format("DD-MM-yyyy hh:mm") : null}
           </Text>
-          <TouchableOpacity
-            style={navigationStyle.navigationButton}
-            //onPress={}
-          >
-            <Text style={navigationStyle.navigationButtonText}>
-              Dołącz do wydarzenia
-            </Text>
-          </TouchableOpacity>
+          <Text style={styles.title}>Osoby biorące udział w wydarzeniu: </Text>
+          <View style={styles.usersList}>
+            <FlatList
+              showsVerticalScrollIndicator={false}
+              showsHorizontalScrollIndicator={false}
+              data={UsersInEvents}
+              renderItem={({ item }) => (
+                <View style={styles.marginTop15}>
+                  <Text style={styles.events}>
+                    {item.UserName} - {item.Email}
+                  </Text>
+                </View>
+              )}
+              keyExtractor={(item, index) => index.toString()}
+            />
+          </View>
+          {shouldShow ? (
+            <TouchableOpacity
+              style={navigationStyle.navigationButton}
+              onPress={AddToEvent}
+            >
+              <Text style={navigationStyle.navigationButtonText}>
+                Dołącz do wydarzenia
+              </Text>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              style={navigationStyle.navigationButton}
+              onPress={QuitEvent}
+            >
+              <Text style={navigationStyle.navigationButtonText}>
+                Opuść wydarzenie
+              </Text>
+            </TouchableOpacity>
+          )}
+          {errMessage ? (
+            <View style={styles.eventErrMessageStyle}>
+              <Text style={styles.errMessageColor}>{errMessage}</Text>
+            </View>
+          ) : null}
+          {userRole == "Admin" || userRole == "Koordynator" ? (
+            <TouchableOpacity
+              style={navigationStyle.navigationButton}
+              onPress={DeleteEvent}
+            >
+              <Text style={navigationStyle.navigationButtonText}>
+                Usuń wydarzenie
+              </Text>
+            </TouchableOpacity>
+          ) : null}
           <TouchableOpacity
             style={navigationStyle.navigationButton}
             onPress={() =>
@@ -1062,7 +1199,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   eventsList: {
-    height: 45 * vh,
+    height: 40 * vh,
     alignItems: "center",
   },
   events: {
@@ -1070,7 +1207,7 @@ const styles = StyleSheet.create({
     marginLeft: "auto",
     marginRight: "auto",
     fontSize: 2 * vh,
-    marginTop: 20,
+    marginTop: 5,
   },
   refreshbutton: {
     marginTop: "5%",
@@ -1086,6 +1223,11 @@ const styles = StyleSheet.create({
     padding: 10,
     position: "relative",
     width: 200,
+  },
+  eventErrMessageStyle: {
+    padding: 10,
+    position: "relative",
+    width: "auto",
   },
   errMessageColor: {
     color: "orange",

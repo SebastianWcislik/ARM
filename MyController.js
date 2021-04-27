@@ -31,7 +31,7 @@ app.get("/users", function (req, res) {
   });
 });
 
-// GET All events from database
+// GET All events
 app.get("/events", function (req, res) {
   connection.getConnection(function (err, connection) {
     connection.query("SELECT * FROM events", function (error, results, fields) {
@@ -42,12 +42,88 @@ app.get("/events", function (req, res) {
   });
 });
 
-// GET sepecific event from database by Id
+// GET sepecific event by Id
 app.get("/eventById", function (req, res) {
   connection.getConnection(function (err, connection) {
     var Id = req.query.Id;
     connection.query(
       "SELECT * FROM events WHERE Id=" + Id,
+      function (error, results, fields) {
+        if (error) throw error;
+
+        res.send(results);
+      }
+    );
+  });
+});
+
+// GET users in events by eventId
+app.get("/getUsersInEvent", function (req, res) {
+  connection.getConnection(function (err, connection) {
+    var eventId = req.query.eventId;
+    connection.query(
+      "SELECT * FROM v_usersinevents WHERE EventId=" + eventId,
+      function (error, results, fields) {
+        if (error) throw error;
+
+        res.send(results);
+      }
+    );
+  });
+});
+
+// GET add user to event
+app.get("/addToEvent", function (req, res) {
+  connection.getConnection(function (err, connection) {
+    var userId = req.query.userId;
+    var eventId = req.query.eventId;
+    connection.query(
+      "Select sys.f_addToEvent(" + userId + ", " + eventId + ") as result",
+      function (error, results, fields) {
+        if (error) throw error;
+
+        res.send(results);
+      }
+    );
+  });
+});
+
+// GET delete event
+app.get("/deleteEvent", function (req, res) {
+  connection.getConnection(function (err, connection) {
+    var eventId = req.query.eventId;
+    connection.query(
+      "Select sys.f_deleteEvent(" + eventId + ") as result",
+      function (error, results, fields) {
+        if (error) throw error;
+
+        res.send(results);
+      }
+    );
+  });
+});
+
+// GET specific user in event by email
+app.get("/getUserInEvent", function (req, res) {
+  connection.getConnection(function (err, connection) {
+    var email = req.query.Email;
+    connection.query(
+      "SELECT * FROM v_usersinevents WHERE Email=" + email,
+      function (error, results, fields) {
+        if (error) throw error;
+
+        res.send(results);
+      }
+    );
+  });
+});
+
+// GET delete user from event
+app.get("/deleteFromEvent", function (req, res) {
+  connection.getConnection(function (err, connection) {
+    var Id = req.query.Id;
+    connection.query(
+      "Select sys.f_deleteFromEvent(" + Id + ") as result",
       function (error, results, fields) {
         if (error) throw error;
 
@@ -77,7 +153,7 @@ app.get("/getUserInfo", function (req, res) {
   connection.getConnection(function (err, connection) {
     var email = req.query.email;
     connection.query(
-      "SELECT Name, Email, State FROM users WHERE Email=" + email,
+      "SELECT Id, Name, Email, State FROM users WHERE Email=" + email,
       function (error, results, fields) {
         if (error) throw error;
 
