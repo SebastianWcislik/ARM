@@ -103,6 +103,32 @@ app.get("/deleteEvent", function (req, res) {
   });
 });
 
+// GET add event
+app.get("/addEvent", function (req, res) {
+  connection.getConnection(function (err, connection) {
+    var eventName = req.query.eventName;
+    var eventLocalization = req.query.eventLocalization;
+    var eventFrom = req.query.eventFrom;
+    var eventTo = req.query.eventTo == "" ? null : req.query.eventTo;
+    connection.query(
+      "Select sys.f_addEvent(" +
+        eventName +
+        "," +
+        eventLocalization +
+        "," +
+        eventFrom +
+        "," +
+        eventTo +
+        ") as result",
+      function (error, results, fields) {
+        if (error) throw error;
+
+        res.send(results);
+      }
+    );
+  });
+});
+
 // GET specific user in event by email
 app.get("/getUserInEvent", function (req, res) {
   connection.getConnection(function (err, connection) {
