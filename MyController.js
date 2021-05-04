@@ -5,6 +5,7 @@ const rateLimit = require("express-rate-limit");
 
 const connection = mySql.createPool({
   host: "eu-mm-dub-479948e6acf4.g5.cleardb.net", // Adress to your database (localhost)
+  port: 3306,
   user: "b433e30cb2acef", // Login to your database
   password: "f4990f69", // Password
   database: "heroku_c0103a94eead424", // Name of used database
