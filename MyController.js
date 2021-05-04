@@ -4,11 +4,11 @@ const nodemailer = require("nodemailer");
 const rateLimit = require("express-rate-limit");
 
 const connection = mySql.createPool({
-  host: "eu-mm-dub-479948e6acf4.g5.cleardb.net", // Adress to your database (localhost)
+  host: "eu-mm-dub-cb593a2aad08.g5.cleardb.net", // Adress to your database (localhost)
   port: 3306,
-  user: "b433e30cb2acef", // Login to your database
-  password: "f4990f69", // Password
-  database: "heroku_c0103a94eead424", // Name of used database
+  user: "bcc403db2a704a", // Login to your database
+  password: "52948415", // Password
+  database: "heroku_ade82250053542c", // Name of used database
 });
 
 const app = express();
