@@ -336,7 +336,7 @@ app.get("/sendMail", function (req, res) {
 
 app.use(limiter);
 
-var PORT = 3000; //process.env.PORT || 3000;
+var PORT = process.env.PORT || 3000;
 // Starting our server.
 app.listen(PORT, () => {
   console.log("Server Running at " + PORT);
