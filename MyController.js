@@ -4,10 +4,10 @@ const nodemailer = require("nodemailer");
 const rateLimit = require("express-rate-limit");
 
 const connection = mySql.createPool({
-  host: "localhost", // Adress to your database (localhost)
-  user: "admin", // Login to your database
-  password: "asdasdasd", // Password
-  database: "sys", // Name of used database
+  host: "eu-mm-dub-479948e6acf4.g5.cleardb.net", // Adress to your database (localhost)
+  user: "b433e30cb2acef", // Login to your database
+  password: "f4990f69", // Password
+  database: "heroku_c0103a94eead424", // Name of used database
 });
 
 const app = express();
@@ -335,7 +335,8 @@ app.get("/sendMail", function (req, res) {
 
 app.use(limiter);
 
+var PORT = process.env.PORT || 3000;
 // Starting our server.
-app.listen(3000, () => {
+app.listen(PORT, () => {
   console.log("Server Running");
 });

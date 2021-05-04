@@ -10520,10 +10520,10 @@ react-native-vector-icons@^7.0.0:
     prop-types "^15.7.2"
     yargs "^15.0.2"
 
-react-native-viewport-units@0.0.5:
+react-native-viewport-units-fix@0.0.5:
   version "0.0.5"
-  resolved "https://registry.yarnpkg.com/react-native-viewport-units/-/react-native-viewport-units-0.0.5.tgz#c86448ca6497e49a9255a48589f1609d6b73f503"
-  integrity sha1-yGRIymSX5JqSVaSFifFgnWtz9QM=
+  resolved "https://registry.yarnpkg.com/react-native-viewport-units-fix/-/react-native-viewport-units-fix-0.0.5.tgz#971e6117f8beed752e66fa58ca76a0398e541989"
+  integrity sha512-Tkoi7YUCwGYXV9l/h39A4gwM/LKm+hUiZicsviGt065Ny4M7yyjLDEzni9O96GuQlyNGy5g/e2WPkVW91RYfKw==
 
 react-native-web@^0.15.6:
   version "0.15.7"
