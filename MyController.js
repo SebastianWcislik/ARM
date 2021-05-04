@@ -79,7 +79,7 @@ app.get("/addToEvent", function (req, res) {
     var userId = req.query.userId;
     var eventId = req.query.eventId;
     connection.query(
-      "Select sys.f_addToEvent(" + userId + ", " + eventId + ") as result",
+      "Select f_addToEvent(" + userId + ", " + eventId + ") as result",
       function (error, results, fields) {
         if (error) throw error;
 
@@ -94,7 +94,7 @@ app.get("/deleteEvent", function (req, res) {
   connection.getConnection(function (err, connection) {
     var eventId = req.query.eventId;
     connection.query(
-      "Select sys.f_deleteEvent(" + eventId + ") as result",
+      "Select f_deleteEvent(" + eventId + ") as result",
       function (error, results, fields) {
         if (error) throw error;
 
@@ -112,7 +112,7 @@ app.get("/addEvent", function (req, res) {
     var eventFrom = req.query.eventFrom;
     var eventTo = req.query.eventTo == "" ? null : req.query.eventTo;
     connection.query(
-      "Select sys.f_addEvent(" +
+      "Select f_addEvent(" +
         eventName +
         "," +
         eventLocalization +
@@ -150,7 +150,7 @@ app.get("/deleteFromEvent", function (req, res) {
   connection.getConnection(function (err, connection) {
     var Id = req.query.Id;
     connection.query(
-      "Select sys.f_deleteFromEvent(" + Id + ") as result",
+      "Select f_deleteFromEvent(" + Id + ") as result",
       function (error, results, fields) {
         if (error) throw error;
 
@@ -195,7 +195,7 @@ app.get("/getSelectedUserInfo", function (req, res) {
   connection.getConnection(function (err, connection) {
     var email = req.query.email;
     connection.query(
-      "SELECT * FROM sys.v_userdetails WHERE Email=" + email,
+      "SELECT * FROM v_userdetails WHERE Email=" + email,
       function (error, results, fields) {
         if (error) throw error;
 
@@ -211,7 +211,7 @@ app.get("/getUserState", function (req, res) {
     var email = req.query.email;
     var state = req.query.state;
     connection.query(
-      "SELECT sys.f_changeState(" + email + ", " + state + ") as result",
+      "SELECT f_changeState(" + email + ", " + state + ") as result",
       function (error, results, fields) {
         if (error) throw error;
 
@@ -227,7 +227,7 @@ app.get("/getPassword", function (req, res) {
     var email = req.query.email;
     var pass = req.query.password;
     connection.query(
-      "Select sys.f_checkPassword(" + email + ", " + pass + ") as result",
+      "Select f_checkPassword(" + email + ", " + pass + ") as result",
       function (error, results, fields) {
         if (error) throw error;
 
@@ -243,7 +243,7 @@ app.get("/setPassword", function (req, res) {
     var email = req.query.email;
     var pass = req.query.password;
     connection.query(
-      "Select sys.f_changePassword(" + email + ", " + pass + ") as result",
+      "Select f_changePassword(" + email + ", " + pass + ") as result",
       function (error, results, fields) {
         if (error) throw error;
 
@@ -258,7 +258,7 @@ app.get("/getRoles", function (req, res) {
   connection.getConnection(function (err, connection) {
     var email = req.query.email;
     connection.query(
-      "SELECT Name FROM sys.v_usersroles WHERE Email=" + email,
+      "SELECT Name FROM v_usersroles WHERE Email=" + email,
       function (error, results, fields) {
         if (error) throw error;
 
@@ -273,7 +273,7 @@ app.get("/isThereUser", function (req, res) {
   connection.getConnection(function (err, connection) {
     var email = req.query.email;
     connection.query(
-      "Select sys.f_checkIsThereUser(" + email + ") as result",
+      "Select f_checkIsThereUser(" + email + ") as result",
       function (error, results, fields) {
         if (error) throw error;
 
@@ -291,7 +291,7 @@ app.get("/createUser", function (req, res) {
     var name = req.query.name;
     var role = req.query.role;
     connection.query(
-      "Select sys.f_createUser(" +
+      "Select f_createUser(" +
         email +
         ", " +
         name +
