@@ -340,4 +340,6 @@ var PORT = process.env.PORT || 3000;
 // Starting our server.
 app.listen(PORT, () => {
   console.log("Server Running at " + PORT);
+  console.log(process.env.HOST);
+  console.log(process.env.BROWSERSLIST);
 });
