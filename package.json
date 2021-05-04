@@ -26,7 +26,7 @@
     "nodemailer": "^6.5.0",
     "react": "^16.13.1",
     "react-dom": "^17.0.2",
-    "react-native": "https://github.com/expo/react-native/archive/sdk-40.0.0.tar.gz",
+    "react-native": "^0.64.0",
     "react-native-dropdown-picker": "^4.0.9",
     "react-native-gesture-handler": "~1.8.0",
     "react-native-safe-area-context": "3.1.9",
