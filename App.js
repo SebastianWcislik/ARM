@@ -4,7 +4,7 @@ import { NavigationContainer, useFocusEffect } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { login } from "./API/mock";
 import Moment from "moment";
-import { vw, vh } from "react-native-viewport-units";
+import { vw, vh } from "react-native-viewport-units-fix";
 import {
   getToken,
   setToken,
