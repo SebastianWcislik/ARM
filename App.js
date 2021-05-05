@@ -30,7 +30,7 @@ import {
 
 // Deklaracja zmiennych globalnych
 
-const serwerAdress = "https://arm-dev.herokuapp.com"; // baza danych
+const serwerAdress = "http://arm-dev.herokuapp.com"; // baza danych
 
 // APP
 
