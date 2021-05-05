@@ -37,7 +37,8 @@ public class DevLoadingViewController {
     sEnabled = enabled;
   }
 
-  public DevLoadingViewController(ReactInstanceManagerDevHelper reactInstanceManagerHelper) {
+  public DevLoadingViewController(
+      Context context, ReactInstanceManagerDevHelper reactInstanceManagerHelper) {
     mReactInstanceManagerHelper = reactInstanceManagerHelper;
   }
 
@@ -97,7 +98,12 @@ public class DevLoadingViewController {
             message.append(status != null ? status : "Loading");
             if (done != null && total != null && total > 0) {
               message.append(
-                  String.format(Locale.getDefault(), " %.1f%%", (float) done / total * 100));
+                  String.format(
+                      Locale.getDefault(),
+                      " %.1f%% (%d/%d)",
+                      (float) done / total * 100,
+                      done,
+                      total));
             }
             message.append("\u2026"); // `...` character
             if (mDevLoadingView != null) {
