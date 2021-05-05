@@ -28,6 +28,7 @@ app.get("/users", function (req, res) {
       if (error) throw error;
 
       res.send(results);
+      res.header("Access-Control-Allow-Origin", "*").sendStatus(200);
     });
   });
 });
@@ -39,6 +40,7 @@ app.get("/events", function (req, res) {
       if (error) throw error;
 
       res.send(results);
+      res.header("Access-Control-Allow-Origin", "*").sendStatus(200);
     });
   });
 });
@@ -53,6 +55,7 @@ app.get("/eventById", function (req, res) {
         if (error) throw error;
 
         res.send(results);
+        res.header("Access-Control-Allow-Origin", "*").sendStatus(200);
       }
     );
   });
@@ -68,6 +71,7 @@ app.get("/getUsersInEvent", function (req, res) {
         if (error) throw error;
 
         res.send(results);
+        res.header("Access-Control-Allow-Origin", "*").sendStatus(200);
       }
     );
   });
@@ -84,6 +88,7 @@ app.get("/addToEvent", function (req, res) {
         if (error) throw error;
 
         res.send(results);
+        res.header("Access-Control-Allow-Origin", "*").sendStatus(200);
       }
     );
   });
@@ -99,6 +104,7 @@ app.get("/deleteEvent", function (req, res) {
         if (error) throw error;
 
         res.send(results);
+        res.header("Access-Control-Allow-Origin", "*").sendStatus(200);
       }
     );
   });
@@ -125,6 +131,7 @@ app.get("/addEvent", function (req, res) {
         if (error) throw error;
 
         res.send(results);
+        res.header("Access-Control-Allow-Origin", "*").sendStatus(200);
       }
     );
   });
@@ -140,6 +147,7 @@ app.get("/getUserInEvent", function (req, res) {
         if (error) throw error;
 
         res.send(results);
+        res.header("Access-Control-Allow-Origin", "*").sendStatus(200);
       }
     );
   });
@@ -155,6 +163,7 @@ app.get("/deleteFromEvent", function (req, res) {
         if (error) throw error;
 
         res.send(results);
+        res.header("Access-Control-Allow-Origin", "*").sendStatus(200);
       }
     );
   });
@@ -170,6 +179,7 @@ app.get("/userToLogin", function (req, res) {
         if (error) throw error;
 
         res.send(results);
+        res.header("Access-Control-Allow-Origin", "*").sendStatus(200);
       }
     );
   });
@@ -185,6 +195,7 @@ app.get("/getUserInfo", function (req, res) {
         if (error) throw error;
 
         res.send(results);
+        res.header("Access-Control-Allow-Origin", "*").sendStatus(200);
       }
     );
   });
@@ -200,6 +211,7 @@ app.get("/getSelectedUserInfo", function (req, res) {
         if (error) throw error;
 
         res.send(results);
+        res.header("Access-Control-Allow-Origin", "*").sendStatus(200);
       }
     );
   });
@@ -216,6 +228,7 @@ app.get("/getUserState", function (req, res) {
         if (error) throw error;
 
         res.send(results);
+        res.header("Access-Control-Allow-Origin", "*").sendStatus(200);
       }
     );
   });
@@ -232,6 +245,7 @@ app.get("/getPassword", function (req, res) {
         if (error) throw error;
 
         res.send(results);
+        res.header("Access-Control-Allow-Origin", "*").sendStatus(200);
       }
     );
   });
@@ -248,6 +262,7 @@ app.get("/setPassword", function (req, res) {
         if (error) throw error;
 
         res.send(results);
+        res.header("Access-Control-Allow-Origin", "*").sendStatus(200);
       }
     );
   });
@@ -263,6 +278,7 @@ app.get("/getRoles", function (req, res) {
         if (error) throw error;
 
         res.send(results);
+        res.header("Access-Control-Allow-Origin", "*").sendStatus(200);
       }
     );
   });
@@ -278,6 +294,7 @@ app.get("/isThereUser", function (req, res) {
         if (error) throw error;
 
         res.send(results);
+        res.header("Access-Control-Allow-Origin", "*").sendStatus(200);
       }
     );
   });
@@ -304,6 +321,7 @@ app.get("/createUser", function (req, res) {
         if (error) throw error;
 
         res.send(results);
+        res.header("Access-Control-Allow-Origin", "*").sendStatus(200);
       }
     );
   });
