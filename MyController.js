@@ -27,8 +27,7 @@ app.get("/users", function (req, res) {
     connection.query("SELECT * FROM users", function (error, results, fields) {
       if (error) throw error;
 
-      res.header("Access-Control-Allow-Origin", "*").sendStatus(200);
-      res.send(results);
+      res.send(results).sendStatus(200);
     });
   });
 });
@@ -39,8 +38,7 @@ app.get("/events", function (req, res) {
     connection.query("SELECT * FROM events", function (error, results, fields) {
       if (error) throw error;
 
-      res.header("Access-Control-Allow-Origin", "*").sendStatus(200);
-      res.send(results);
+      res.send(results).sendStatus(200);
     });
   });
 });
@@ -54,8 +52,7 @@ app.get("/eventById", function (req, res) {
       function (error, results, fields) {
         if (error) throw error;
 
-        res.header("Access-Control-Allow-Origin", "*").sendStatus(200);
-        res.send(results);
+        res.send(results).sendStatus(200);
       }
     );
   });
@@ -70,8 +67,7 @@ app.get("/getUsersInEvent", function (req, res) {
       function (error, results, fields) {
         if (error) throw error;
 
-        res.header("Access-Control-Allow-Origin", "*").sendStatus(200);
-        res.send(results);
+        res.send(results).sendStatus(200);
       }
     );
   });
@@ -87,8 +83,7 @@ app.get("/addToEvent", function (req, res) {
       function (error, results, fields) {
         if (error) throw error;
 
-        res.header("Access-Control-Allow-Origin", "*").sendStatus(200);
-        res.send(results);
+        res.send(results).sendStatus(200);
       }
     );
   });
@@ -103,8 +98,7 @@ app.get("/deleteEvent", function (req, res) {
       function (error, results, fields) {
         if (error) throw error;
 
-        res.header("Access-Control-Allow-Origin", "*").sendStatus(200);
-        res.send(results);
+        res.send(results).sendStatus(200);
       }
     );
   });
@@ -130,8 +124,7 @@ app.get("/addEvent", function (req, res) {
       function (error, results, fields) {
         if (error) throw error;
 
-        res.header("Access-Control-Allow-Origin", "*").sendStatus(200);
-        res.send(results);
+        res.send(results).sendStatus(200);
       }
     );
   });
@@ -146,8 +139,7 @@ app.get("/getUserInEvent", function (req, res) {
       function (error, results, fields) {
         if (error) throw error;
 
-        res.header("Access-Control-Allow-Origin", "*").sendStatus(200);
-        res.send(results);
+        res.send(results).sendStatus(200);
       }
     );
   });
@@ -162,8 +154,7 @@ app.get("/deleteFromEvent", function (req, res) {
       function (error, results, fields) {
         if (error) throw error;
 
-        res.header("Access-Control-Allow-Origin", "*").sendStatus(200);
-        res.send(results);
+        res.send(results).sendStatus(200);
       }
     );
   });
@@ -178,8 +169,7 @@ app.get("/userToLogin", function (req, res) {
       function (error, results, fields) {
         if (error) throw error;
 
-        res.header("Access-Control-Allow-Origin", "*").sendStatus(200);
-        res.send(results);
+        res.send(results).sendStatus(200);
       }
     );
   });
@@ -194,8 +184,7 @@ app.get("/getUserInfo", function (req, res) {
       function (error, results, fields) {
         if (error) throw error;
 
-        res.header("Access-Control-Allow-Origin", "*").sendStatus(200);
-        res.send(results);
+        res.send(results).sendStatus(200);
       }
     );
   });
@@ -210,8 +199,7 @@ app.get("/getSelectedUserInfo", function (req, res) {
       function (error, results, fields) {
         if (error) throw error;
 
-        res.header("Access-Control-Allow-Origin", "*").sendStatus(200);
-        res.send(results);
+        res.send(results).sendStatus(200);
       }
     );
   });
@@ -227,8 +215,7 @@ app.get("/getUserState", function (req, res) {
       function (error, results, fields) {
         if (error) throw error;
 
-        res.header("Access-Control-Allow-Origin", "*").sendStatus(200);
-        res.send(results);
+        res.send(results).sendStatus(200);
       }
     );
   });
@@ -244,8 +231,7 @@ app.get("/getPassword", function (req, res) {
       function (error, results, fields) {
         if (error) throw error;
 
-        res.header("Access-Control-Allow-Origin", "*").sendStatus(200);
-        res.send(results);
+        res.send(results).sendStatus(200);
       }
     );
   });
@@ -261,8 +247,7 @@ app.get("/setPassword", function (req, res) {
       function (error, results, fields) {
         if (error) throw error;
 
-        res.header("Access-Control-Allow-Origin", "*").sendStatus(200);
-        res.send(results);
+        res.send(results).sendStatus(200);
       }
     );
   });
@@ -277,8 +262,7 @@ app.get("/getRoles", function (req, res) {
       function (error, results, fields) {
         if (error) throw error;
 
-        res.header("Access-Control-Allow-Origin", "*").sendStatus(200);
-        res.send(results);
+        res.send(results).sendStatus(200);
       }
     );
   });
@@ -293,8 +277,7 @@ app.get("/isThereUser", function (req, res) {
       function (error, results, fields) {
         if (error) throw error;
 
-        res.header("Access-Control-Allow-Origin", "*").sendStatus(200);
-        res.send(results);
+        res.send(results).sendStatus(200);
       }
     );
   });
@@ -320,8 +303,7 @@ app.get("/createUser", function (req, res) {
       function (error, results, fields) {
         if (error) throw error;
 
-        res.header("Access-Control-Allow-Origin", "*").sendStatus(200);
-        res.send(results);
+        res.send(results).sendStatus(200);
       }
     );
   });
