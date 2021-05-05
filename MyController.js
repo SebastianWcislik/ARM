@@ -38,7 +38,7 @@ app.get("/events", function (req, res) {
     connection.query("SELECT * FROM events", function (error, results, fields) {
       if (error) throw error;
 
-      if (results.length > 0) res.status(200).send(results);
+      res.status(200).send(results);
     });
   });
 });

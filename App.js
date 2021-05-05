@@ -866,6 +866,7 @@ export function ARMEvents({ navigation }) {
     fetch(serwerAdress + "/events")
       .then((response) => response.json())
       .then((json) => {
+        console.log(json);
         if (json == []) return;
         setEvents(json);
       });
