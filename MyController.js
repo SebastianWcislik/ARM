@@ -16,9 +16,14 @@ const app = express();
 // Ustawienie limitu odpytań do 100 na 5 minut na każdego użytkownika
 const limiter = rateLimit({
   windowMs: 5 * 60 * 1000,
-  max: 100,
+  max: 1,
+  delayMs: 0,
   message:
     "Osiągnięto limit odpytań do bazy danych, spróbuj ponownie za 5 minut",
+  handler: function handler(req, res) {
+    logger.log("osiągnięto maksymalną ilość zapytań");
+    logger.log(res);
+  },
 });
 
 // GET All Users from database

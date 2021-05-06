@@ -4,6 +4,7 @@ import { NavigationContainer, useFocusEffect } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { login } from "./API/mock";
 import Moment from "moment";
+import "moment/min/locales";
 import { vw, vh } from "react-native-viewport-units-fix";
 import {
   getToken,
@@ -866,8 +867,6 @@ export function ARMEvents({ navigation }) {
     fetch(serwerAdress + "/events")
       .then((response) => response.json())
       .then((json) => {
-        console.log(json);
-        if (json == []) return;
         setEvents(json);
       });
   };
@@ -904,30 +903,34 @@ export function ARMEvents({ navigation }) {
       <View style={styles.container}>
         <Text style={styles.title}>Lista wydarzeń</Text>
         <View style={styles.eventsList}>
-          <FlatList
-            showsVerticalScrollIndicator={false}
-            showsHorizontalScrollIndicator={false}
-            data={Events}
-            renderItem={({ item }) => (
-              <View style={styles.marginTop15}>
-                <TouchableOpacity>
-                  <Text
-                    style={styles.events}
-                    onPress={() => GetEventDetails(item.Id)}
-                  >
-                    {item.Name}
-                    {"\n"}
-                    {Moment(item.DateFrom).format("DD-MM-yyyy hh:mm")}
-                    {"\n"}
-                    {item.DateTo == null || item.DateTo == ""
-                      ? "-"
-                      : Moment(item.DateTo).format("DD-MM-yyyy hh:mm")}
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            )}
-            keyExtractor={(item, index) => index.toString()}
-          />
+          {Events.length != 0 ? (
+            <FlatList
+              showsVerticalScrollIndicator={false}
+              showsHorizontalScrollIndicator={false}
+              data={Events}
+              renderItem={({ item }) => (
+                <View style={styles.marginTop15}>
+                  <TouchableOpacity>
+                    <Text
+                      style={styles.events}
+                      onPress={() => GetEventDetails(item.Id)}
+                    >
+                      {item.Name}
+                      {"\n"}
+                      {Moment(item.DateFrom).format("DD-MM-yyyy hh:mm")}
+                      {"\n"}
+                      {item.DateTo == null || item.DateTo == ""
+                        ? "-"
+                        : Moment(item.DateTo).format("DD-MM-yyyy hh:mm")}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+              keyExtractor={(item, index) => index.toString()}
+            />
+          ) : (
+            <Text style={styles.events}>Brak wydarzeń</Text>
+          )}
         </View>
         <View style={styles.refreshbutton}>
           <TouchableOpacity
