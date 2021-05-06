@@ -231,7 +231,7 @@ export function ARMUsersList({ navigation }) {
   }, []);
 
   return (
-    <SafeAreaView style={styles.body}>
+    <SafeAreaView style={styles.body} onTouchStart={Keyboard.dismiss}>
       <Text style={styles.loggedUserStyle}>
         Zalogowany jako, {loggedUser ? loggedUser : null}
       </Text>
@@ -368,7 +368,7 @@ export function ARMMyProfile({ navigation }) {
   }, []);
 
   return (
-    <SafeAreaView style={styles.body}>
+    <SafeAreaView style={styles.body} onTouchStart={Keyboard.dismiss}>
       <Text style={styles.loggedUserStyle}>
         Zalogowany jako, {loggedUser ? loggedUser : null}
       </Text>
@@ -815,7 +815,7 @@ export function ARMUserDetails({ navigation }) {
   }, []);
 
   return (
-    <SafeAreaView style={styles.body}>
+    <SafeAreaView style={styles.body} onTouchStart={Keyboard.dismiss}>
       <Text style={styles.loggedUserStyle}>
         Zalogowany jako, {loggedUser ? loggedUser : null}
       </Text>
@@ -896,7 +896,7 @@ export function ARMEvents({ navigation }) {
   );
 
   return (
-    <SafeAreaView style={styles.body}>
+    <SafeAreaView style={styles.body} onTouchStart={Keyboard.dismiss}>
       <Text style={styles.loggedUserStyle}>
         Zalogowany jako, {loggedUser ? loggedUser : null}
       </Text>
@@ -1089,7 +1089,7 @@ export function ARMEventDetails({ navigation }) {
   }, []);
 
   return (
-    <SafeAreaView style={styles.body}>
+    <SafeAreaView style={styles.body} onTouchStart={Keyboard.dismiss}>
       <Text style={styles.loggedUserStyle}>
         Zalogowany jako, {loggedUser ? loggedUser : null}
       </Text>
@@ -1322,7 +1322,7 @@ export function ARMAddEvent({ navigation }) {
   }, []);
 
   return (
-    <SafeAreaView style={styles.body}>
+    <SafeAreaView style={styles.body} onTouchStart={Keyboard.dismiss}>
       <Text style={styles.loggedUserStyle}>
         Zalogowany jako, {loggedUser ? loggedUser : null}
       </Text>
