@@ -1112,19 +1112,25 @@ export function ARMEventDetails({ navigation }) {
           </Text>
           <Text style={styles.title}>Osoby biorące udział w wydarzeniu: </Text>
           <View style={styles.usersInEventList}>
-            <FlatList
-              showsVerticalScrollIndicator={false}
-              showsHorizontalScrollIndicator={false}
-              data={UsersInEvents}
-              renderItem={({ item }) => (
-                <View style={styles.marginTop15}>
-                  <Text style={styles.events}>
-                    {item.UserName} - {item.Email}
-                  </Text>
-                </View>
-              )}
-              keyExtractor={(item, index) => index.toString()}
-            />
+            {UsersInEvents.length != 0 ? (
+              <FlatList
+                showsVerticalScrollIndicator={false}
+                showsHorizontalScrollIndicator={false}
+                data={UsersInEvents}
+                renderItem={({ item }) => (
+                  <View style={styles.marginTop15}>
+                    <Text style={styles.events}>
+                      {item.UserName} - {item.Email}
+                    </Text>
+                  </View>
+                )}
+                keyExtractor={(item, index) => index.toString()}
+              />
+            ) : (
+              <Text style={styles.events}>
+                Brak użytkowników biorących udział
+              </Text>
+            )}
           </View>
           {shouldShow ? (
             <TouchableOpacity
