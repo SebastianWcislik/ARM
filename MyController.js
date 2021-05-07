@@ -6,8 +6,8 @@ const rateLimit = require("express-rate-limit");
 const connection = mySql.createPool({
   host: "db-mysql-fra1-95681-do-user-9198283-0.b.db.ondigitalocean.com", // Adress to your database (localhost)
   port: 25060,
-  user: "doadmin", // Login to your database
-  password: "ilywdlof7kjh3wzt", // Password
+  user: "admin", // Login to your database
+  password: "fggzx7yiy1s3ht1m", // Password
   database: "defaultdb", // Name of used database
 });
 
