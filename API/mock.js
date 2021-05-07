@@ -1,6 +1,4 @@
-import { useEffect, useState } from "react";
-
-const serwerAdress = "http://arm-dev.herokuapp.com";
+const serwerAdress = "https://arm-dev.herokuapp.com";
 
 const mockSuccess = (value) => {
   return new Promise((resolve) => {

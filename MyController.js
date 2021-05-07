@@ -4,20 +4,19 @@ const nodemailer = require("nodemailer");
 const rateLimit = require("express-rate-limit");
 
 const connection = mySql.createPool({
-  host: "eu-mm-dub-cb593a2aad08.g5.cleardb.net", // Adress to your database (localhost)
-  port: 3306,
-  user: "bcc403db2a704a", // Login to your database
-  password: "52948415", // Password
-  database: "heroku_ade82250053542c", // Name of used database
+  host: "db-mysql-fra1-95681-do-user-9198283-0.b.db.ondigitalocean.com", // Adress to your database (localhost)
+  port: 25060,
+  user: "doadmin", // Login to your database
+  password: "ilywdlof7kjh3wzt", // Password
+  database: "defaultdb", // Name of used database
 });
 
 const app = express();
 
 // Ustawienie limitu odpytań do 100 na 5 minut na każdego użytkownika
 const limiter = rateLimit({
-  windowMs: 5 * 60 * 1000,
-  max: 1,
-  delayMs: 0,
+  windowMs: 1,
+  max: 100,
   message:
     "Osiągnięto limit odpytań do bazy danych, spróbuj ponownie za 5 minut",
   handler: function handler(req, res) {
@@ -29,22 +28,28 @@ const limiter = rateLimit({
 // GET All Users from database
 app.get("/users", function (req, res) {
   connection.getConnection(function (err, connection) {
-    connection.query("SELECT * FROM users", function (error, results, fields) {
-      if (error) throw error;
+    connection.query(
+      "SELECT Name, State, Email FROM users",
+      function (error, results, fields) {
+        if (error) throw error;
 
-      if (results.length > 0) res.status(200).send(results);
-    });
+        if (results.length > 0) res.status(200).send(results);
+      }
+    );
   });
 });
 
 // GET All events
 app.get("/events", function (req, res) {
   connection.getConnection(function (err, connection) {
-    connection.query("SELECT * FROM events", function (error, results, fields) {
-      if (error) throw error;
+    connection.query(
+      "SELECT Name, DateFrom, DateTo FROM events",
+      function (error, results, fields) {
+        if (error) throw error;
 
-      res.status(200).send(results);
-    });
+        res.status(200).send(results);
+      }
+    );
   });
 });
 
@@ -53,7 +58,7 @@ app.get("/eventById", function (req, res) {
   connection.getConnection(function (err, connection) {
     var Id = req.query.Id;
     connection.query(
-      "SELECT * FROM events WHERE Id=" + Id,
+      "SELECT Name, DateFrom, DateTo, Localization FROM events WHERE Id=" + Id,
       function (error, results, fields) {
         if (error) throw error;
 
@@ -68,7 +73,7 @@ app.get("/getUsersInEvent", function (req, res) {
   connection.getConnection(function (err, connection) {
     var eventId = req.query.eventId;
     connection.query(
-      "SELECT * FROM v_usersinevents WHERE EventId=" + eventId,
+      "SELECT UserName, Email FROM v_usersinevents WHERE EventId=" + eventId,
       function (error, results, fields) {
         if (error) throw error;
 
@@ -140,7 +145,7 @@ app.get("/getUserInEvent", function (req, res) {
   connection.getConnection(function (err, connection) {
     var email = req.query.Email;
     connection.query(
-      "SELECT * FROM v_usersinevents WHERE Email=" + email,
+      "SELECT Id FROM v_usersinevents WHERE Email=" + email,
       function (error, results, fields) {
         if (error) throw error;
 
@@ -174,7 +179,7 @@ app.get("/userToLogin", function (req, res) {
       function (error, results, fields) {
         if (error) throw error;
 
-        if (results.length > 0) res.status(200).send(results);
+        res.status(200).send(results);
       }
     );
   });
@@ -200,11 +205,12 @@ app.get("/getSelectedUserInfo", function (req, res) {
   connection.getConnection(function (err, connection) {
     var email = req.query.email;
     connection.query(
-      "SELECT * FROM v_userdetails WHERE Email=" + email,
+      "SELECT Name, State, RoleName, Email FROM v_userdetails WHERE Email=" +
+        email,
       function (error, results, fields) {
         if (error) throw error;
 
-        if (results.length > 0) res.status(200).send(results);
+        res.status(200).send(results);
       }
     );
   });

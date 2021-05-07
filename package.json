@@ -4,7 +4,7 @@
   "version": "40.0.0",
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
-    "start": "node MyController.js",
+    "start": "node --max-old-space-size=8192 MyController.js",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
