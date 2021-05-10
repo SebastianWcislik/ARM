@@ -12,13 +12,14 @@
     "build": "expo build:web"
   },
   "dependencies": {
+    "@material-ui/core": "^4.11.4",
     "@react-native-community/async-storage": "^1.12.1",
     "@react-native-community/masked-view": "0.1.10",
     "@react-native-picker/picker": "github:react-native-picker/picker",
     "@react-navigation/native": "^5.9.3",
     "@react-navigation/stack": "^5.14.3",
     "expo": "^40.0.1",
-    "expo-cli": "^4.4.3",
+    "expo-cli": "^4.4.4",
     "express": "^4.17.1",
     "express-rate-limit": "^5.2.6",
     "moment": "^2.29.1",
@@ -27,13 +28,17 @@
     "react": "^16.13.1",
     "react-dom": "^17.0.2",
     "react-native": "^0.63.2",
+    "react-native-animation-library": "^0.0.8",
     "react-native-dropdown-picker": "^4.0.9",
     "react-native-gesture-handler": "~1.8.0",
+    "react-native-paper": "^4.8.1",
+    "react-native-paper-datetimepicker": "^0.0.2",
     "react-native-safe-area-context": "3.1.9",
     "react-native-screens": "~2.15.0",
     "react-native-viewport-units-fix": "0.0.5",
-    "react-native-web": "^0.15.6",
-    "react-navigation": "^4.4.4"
+    "react-native-web": "^0.16.2",
+    "react-navigation": "^4.4.4",
+    "react-window": "^1.8.6"
   },
   "devDependencies": {}
 }

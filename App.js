@@ -16,6 +16,7 @@ import {
   getEventToken,
   setEventToken,
 } from "./API/token";
+import { DateTimePickerModal } from "react-native-paper-datetimepicker";
 import { Picker } from "@react-native-picker/picker";
 import DropDownPicker from "react-native-dropdown-picker";
 import {
@@ -105,7 +106,6 @@ export function ARMLogin({ navigation }) {
   // Zmienne do logowania
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [resUser, setResUser] = useState([]);
 
   // Odpowiedź z API - errorHandler
   const [errMessage, setErrMessage] = useState("");
@@ -113,7 +113,7 @@ export function ARMLogin({ navigation }) {
   const loginUser = () => {
     setErrMessage("");
 
-    login(email, password, resUser)
+    login(email, password)
       .then(async (res) => {
         await setToken(res.loggedUser);
         navigation.navigate("ARM", { name: "ARM" });
@@ -901,11 +901,11 @@ export function ARMEvents({ navigation }) {
                     >
                       {item.Name}
                       {"\n"}
-                      {Moment(item.DateFrom).format("DD-MM-yyyy hh:mm")}
+                      {Moment(item.DateFrom).format("DD-MM-yyyy HH:mm")}
                       {"\n"}
                       {item.DateTo == null || item.DateTo == ""
                         ? "-"
-                        : Moment(item.DateTo).format("DD-MM-yyyy hh:mm")}
+                        : Moment(item.DateTo).format("DD-MM-yyyy HH:mm")}
                     </Text>
                   </TouchableOpacity>
                 </View>
@@ -1093,11 +1093,11 @@ export function ARMEventDetails({ navigation }) {
           </Text>
           <Text style={myProfile.myData}>
             Data rozpoczęcia:{" "}
-            {eventFrom ? Moment(eventFrom).format("DD-MM-yyyy hh:mm") : null}
+            {eventFrom ? Moment(eventFrom).format("DD-MM-yyyy HH:mm") : null}
           </Text>
           <Text style={myProfile.myData}>
             Data zakończenia:{" "}
-            {eventTo ? Moment(eventTo).format("DD-MM-yyyy hh:mm") : null}
+            {eventTo ? Moment(eventTo).format("DD-MM-yyyy HH:mm") : null}
           </Text>
           <Text style={styles.title}>Osoby biorące udział w wydarzeniu: </Text>
           <View style={styles.usersInEventList}>
@@ -1185,8 +1185,11 @@ export function ARMAddEvent({ navigation }) {
 
   const [eventName, setEventName] = useState("");
   const [eventLocalization, setEventLocalization] = useState("");
-  const [eventFrom, setEventFrom] = useState("");
-  const [eventTo, setEventTo] = useState("");
+  const [eventFrom, setEventFrom] = useState(new Date());
+  const [eventTo, setEventTo] = useState(new Date());
+
+  const [visibleFrom, setVisibleFrom] = useState(false);
+  const [visibleTo, setVisibleTo] = useState(false);
 
   const GetLoggedUser = () => {
     getToken().then((res) => {
@@ -1208,6 +1211,24 @@ export function ARMAddEvent({ navigation }) {
       setErrEventLocalization("Uzupełnij localizację wydarzenia");
     }
     setEventLocalization(val);
+  };
+
+  const onDismissFrom = () => {
+    setVisibleFrom(false);
+  };
+
+  const onDismissTo = () => {
+    setVisibleTo(false);
+  };
+
+  const onChangeFrom = (date) => {
+    setVisibleFrom(false);
+    setEventFrom(date);
+  };
+
+  const onChangeTo = (date) => {
+    setVisibleTo(false);
+    setEventTo(date);
   };
 
   const validateFromDate = (date) => {
@@ -1273,14 +1294,14 @@ export function ARMAddEvent({ navigation }) {
 
     if (eventName == "" || eventLocalization == "" || eventFrom == "") return;
 
-    var dateFrom = Moment(eventFrom, "DD-MM-yyyy hh:mm").format(
-      "yyyy-MM-DD hh:mm"
+    var dateFrom = Moment(eventFrom, "DD-MM-yyyy HH:mm").format(
+      "yyyy-MM-DD HH:mm"
     );
     var dateTo = null;
     if (eventTo != "")
       dateTo =
         "'" +
-        Moment(eventTo, "DD-MM-yyyy hh:mm").format("yyyy-MM-DD hh:mm") +
+        Moment(eventTo, "DD-MM-yyyy HH:mm").format("yyyy-MM-DD HH:mm") +
         "'";
 
     fetch(
@@ -1349,23 +1370,31 @@ export function ARMAddEvent({ navigation }) {
               <Text style={styles.errMessageColor}>{errEventLocalization}</Text>
             </View>
           ) : null}
-          <TextInput
-            style={styles.textInputStyle}
-            placeholder="Podaj datę rozpoczęcia"
-            value={eventFrom}
-            onChangeText={(val) => validateFromDate(val)}
+          <DateTimePickerModal
+            visible={visibleFrom}
+            onDismiss={onDismissFrom}
+            date={eventFrom}
+            onConfirm={(val) => onChangeFrom(val)}
           />
+          <TouchableOpacity onPress={() => setVisibleFrom(true)}>
+            <Text>Wybierz datę rozpoczęcia</Text>
+            <Text>{Moment(eventFrom).format("DD-MM-yyyy HH:mm")}</Text>
+          </TouchableOpacity>
           {errFromMessage ? (
             <View style={styles.eventErrMessageStyle}>
               <Text style={styles.errMessageColor}>{errFromMessage}</Text>
             </View>
           ) : null}
-          <TextInput
-            style={styles.textInputStyle}
-            placeholder="Podaj datę zakończenia"
-            value={eventTo}
-            onChangeText={(val) => validateToDate(val)}
+          <DateTimePickerModal
+            visible={visibleTo}
+            onDismiss={onDismissTo}
+            date={eventTo}
+            onConfirm={(val) => onChangeTo(val)}
           />
+          <TouchableOpacity onPress={() => setVisibleTo(true)}>
+            <Text>Wybierz datę zakończenia</Text>
+            <Text>{Moment(eventTo).format("DD-MM-yyyy HH:mm")}</Text>
+          </TouchableOpacity>
           {errToMessage ? (
             <View style={styles.eventErrMessageStyle}>
               <Text style={styles.errMessageColor}>{errToMessage}</Text>
