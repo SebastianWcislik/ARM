@@ -110,10 +110,6 @@ export function ARMLogin({ navigation }) {
   // Odpowiedź z API - errorHandler
   const [errMessage, setErrMessage] = useState("");
 
-  // Pokazywanie/ukrywanie przycisków do logowania
-  const [shouldShow, setShouldShow] = useState(false);
-  const [shouldDisable, setShouldDisable] = useState(true);
-
   const loginUser = () => {
     setErrMessage("");
 
@@ -123,63 +119,49 @@ export function ARMLogin({ navigation }) {
         navigation.navigate("ARM", { name: "ARM" });
       })
       .catch((err) => setErrMessage(err.message));
-    setShouldShow(!shouldShow);
-    setShouldDisable(!shouldDisable);
   };
 
-  const getLoginUser = () => {
-    setErrMessage("");
+  // const getLoginUser = () => {
+  //   setErrMessage("");
 
-    fetch(serwerAdress + "/userToLogin?email=" + '"' + email + '"')
-      .then((response) => response.json())
-      .then((json) => {
-        if (json[0] == undefined || json[0] == "undefined") {
-          setErrMessage("Podany użytkownik nie istnieje");
-        }
+  //   fetch(serwerAdress + "/userToLogin?email=" + '"' + email + '"')
+  //     .then((response) => response.json())
+  //     .then((json) => {
+  //       if (json[0] == undefined || json[0] == "undefined") {
+  //         setErrMessage("Podany użytkownik nie istnieje");
+  //       }
 
-        if (json[0] != undefined) {
-          setResUser(json);
-          setShouldShow(!shouldShow);
-          setShouldDisable(!shouldDisable);
-        }
-      });
-  };
+  //       if (json[0] != undefined) {
+  //         setResUser(json);
+  //         setShouldShow(!shouldShow);
+  //         setShouldDisable(!shouldDisable);
+  //       }
+  //     });
+  // };
 
   return (
     <SafeAreaView style={styles.body} onTouchStart={Keyboard.dismiss}>
       <View>
         <Text style={styles.title}>Logowanie</Text>
         <TextInput
-          editable={shouldDisable}
           style={styles.textInputStyle}
           placeholder="Nazwa użytkownika"
           value={email}
           onChangeText={(val) => setEmail(val)}
         />
-        {shouldShow ? (
-          <View>
-            <TextInput
-              style={styles.textInputStyle}
-              placeholder="Hasło"
-              value={password}
-              secureTextEntry={true}
-              onChangeText={(val) => setPassword(val)}
-            />
-            <TouchableOpacity
-              style={navigationStyle.loginButton}
-              onPress={loginUser}
-            >
-              <Text style={navigationStyle.navigationButtonText}>Zaloguj</Text>
-            </TouchableOpacity>
-          </View>
-        ) : (
-          <TouchableOpacity
-            style={navigationStyle.loginButton}
-            onPress={getLoginUser}
-          >
-            <Text style={navigationStyle.navigationButtonText}>Zaloguj</Text>
-          </TouchableOpacity>
-        )}
+        <TextInput
+          style={styles.textInputStyle}
+          placeholder="Hasło"
+          value={password}
+          secureTextEntry={true}
+          onChangeText={(val) => setPassword(val)}
+        />
+        <TouchableOpacity
+          style={navigationStyle.loginButton}
+          onPress={loginUser}
+        >
+          <Text style={navigationStyle.navigationButtonText}>Zaloguj</Text>
+        </TouchableOpacity>
         {errMessage ? (
           <View style={styles.errMessageStyle}>
             <Text style={styles.errMessageColor}>{errMessage}</Text>
@@ -996,6 +978,11 @@ export function ARMEventDetails({ navigation }) {
     });
   };
 
+  const GetUserDetails = (email) => {
+    setEmailToken(email);
+    navigation.navigate("Informacje o Użytkowniku", { name: "Informacje" });
+  };
+
   const GetEventInfo = () => {
     getEventToken().then((res) =>
       fetch(serwerAdress + "/eventById?Id=" + res)
@@ -1118,11 +1105,14 @@ export function ARMEventDetails({ navigation }) {
                 showsHorizontalScrollIndicator={false}
                 data={UsersInEvents}
                 renderItem={({ item }) => (
-                  <View style={styles.marginTop15}>
-                    <Text style={styles.events}>
+                  <TouchableOpacity style={styles.marginTop15}>
+                    <Text
+                      style={styles.events}
+                      onPress={() => GetUserDetails(item.Email)}
+                    >
                       {item.UserName} - {item.Email}
                     </Text>
-                  </View>
+                  </TouchableOpacity>
                 )}
                 keyExtractor={(item, index) => index.toString()}
               />

@@ -171,19 +171,19 @@ app.get("/deleteFromEvent", function (req, res) {
 });
 
 // GET Specific user's Id and Name by email
-app.get("/userToLogin", function (req, res) {
-  connection.getConnection(function (err, connection) {
-    var email = req.query.email;
-    connection.query(
-      "SELECT Id, Name FROM users WHERE Email=" + email,
-      function (error, results, fields) {
-        if (error) throw error;
+// app.get("/userToLogin", function (req, res) {
+//   connection.getConnection(function (err, connection) {
+//     var email = req.query.email;
+//     connection.query(
+//       "SELECT Id, Name FROM users WHERE Email=" + email,
+//       function (error, results, fields) {
+//         if (error) throw error;
 
-        res.status(200).send(results);
-      }
-    );
-  });
-});
+//         res.status(200).send(results);
+//       }
+//     );
+//   });
+// });
 
 // GET Specific user's Name, Email and State by email
 app.get("/getUserInfo", function (req, res) {
