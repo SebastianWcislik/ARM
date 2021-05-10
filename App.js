@@ -192,7 +192,7 @@ export function ARMUsersList({ navigation }) {
 
   const GetRoles = () => {
     getToken().then((res) => {
-      fetch(serwerAdress + "/getRoles?email=" + '"' + res + '"')
+      fetch(serwerAdress + "/getRoles?email=" + "'" + res + "'")
         .then((response) => response.json())
         .then((json) => {
           setRoleToken(json[0].Name);
@@ -316,7 +316,7 @@ export function ARMMyProfile({ navigation }) {
   const GetLoggedUser = () => {
     getToken().then((res) => {
       setLoggedUser(res);
-      fetch(serwerAdress + "/getUserInfo?email=" + '"' + res + '"')
+      fetch(serwerAdress + "/getUserInfo?email=" + "'" + res + "'")
         .then((response) => response.json())
         .then((json) => {
           setUserName(json[0].Name);
@@ -330,13 +330,13 @@ export function ARMMyProfile({ navigation }) {
     fetch(
       serwerAdress +
         "/getUserState?email=" +
-        '"' +
+        "'" +
         userEmail +
-        '"' +
+        "'" +
         "&state=" +
-        '"' +
+        "'" +
         selectedState +
-        '"'
+        "'"
     ).then(GetLoggedUser);
   };
 
@@ -448,7 +448,7 @@ export function ARMChangePassword({ navigation }) {
   const GetLoggedUser = () => {
     getToken().then((res) => {
       setLoggedUser(res);
-      fetch(serwerAdress + "/getUserInfo?email=" + '"' + res + '"')
+      fetch(serwerAdress + "/getUserInfo?email=" + "'" + res + "'")
         .then((response) => response.json())
         .then((json) => {
           setUserEmail(json[0].Email);
@@ -462,12 +462,13 @@ export function ARMChangePassword({ navigation }) {
     fetch(
       serwerAdress +
         "/getPassword?email=" +
-        '"' +
+        "'" +
         userEmail +
-        '"&password=' +
-        '"' +
+        "'" +
+        "&password=" +
+        "'" +
         oldPassword +
-        '"'
+        "'"
     )
       .then((response) => response.json())
       .then((json) => {
@@ -488,12 +489,13 @@ export function ARMChangePassword({ navigation }) {
     fetch(
       serwerAdress +
         "/setPassword?email=" +
-        '"' +
+        "'" +
         userEmail +
-        '"&password=' +
-        '"' +
+        "'" +
+        "&password=" +
+        "'" +
         newPassword +
-        '"'
+        "'"
     )
       .then((response) => response.json())
       .then((json) => {
@@ -617,7 +619,7 @@ export function ARMUserRegistration({ navigation }) {
   };
 
   const IsThereUser = () => {
-    fetch(serwerAdress + "/isThereUser?email=" + '"' + email + '"')
+    fetch(serwerAdress + "/isThereUser?email=" + "'" + email + "'")
       .then((response) => response.json())
       .then((json) => {
         if (json[0].result == 1) setErrMessage("Podany email już istnieje");
@@ -633,21 +635,21 @@ export function ARMUserRegistration({ navigation }) {
     fetch(
       serwerAdress +
         "/createUser?email=" +
-        '"' +
+        "'" +
         email +
-        '"' +
+        "'" +
         "&password=" +
-        '"' +
+        "'" +
         password +
-        '"' +
+        "'" +
         "&name=" +
-        '"' +
+        "'" +
         name +
-        '"' +
+        "'" +
         "&role=" +
-        '"' +
+        "'" +
         role +
-        '"'
+        "'"
     )
       .then((response) => response.json())
       .then((json) => {
@@ -780,7 +782,7 @@ export function ARMUserDetails({ navigation }) {
 
   const GetSelectedUserInfo = () => {
     getEmailToken().then((res) => {
-      fetch(serwerAdress + "/getSelectedUserInfo?email=" + '"' + res + '"')
+      fetch(serwerAdress + "/getSelectedUserInfo?email=" + "'" + res + "'")
         .then((response) => response.json())
         .then((json) => {
           setUserName(json[0].Name);
@@ -1016,7 +1018,7 @@ export function ARMEventDetails({ navigation }) {
   };
 
   const AddToEvent = () => {
-    fetch(serwerAdress + "/getUserInfo?email=" + '"' + loggedUser + '"')
+    fetch(serwerAdress + "/getUserInfo?email=" + "'" + loggedUser + "'")
       .then((res) => res.json())
       .then((json) => {
         fetch(
@@ -1042,7 +1044,7 @@ export function ARMEventDetails({ navigation }) {
   };
 
   const QuitEvent = () => {
-    fetch(serwerAdress + "/getUserInEvent?Email=" + '"' + loggedUser + '"')
+    fetch(serwerAdress + "/getUserInEvent?Email=" + "'" + loggedUser + "'")
       .then((res) => res.json())
       .then((json) =>
         fetch(serwerAdress + "/deleteFromEvent?Id=" + json[0].Id).then(
@@ -1277,24 +1279,24 @@ export function ARMAddEvent({ navigation }) {
     var dateTo = null;
     if (eventTo != "")
       dateTo =
-        '"' +
+        "'" +
         Moment(eventTo, "DD-MM-yyyy hh:mm").format("yyyy-MM-DD hh:mm") +
-        '"';
+        "'";
 
     fetch(
       serwerAdress +
         "/addEvent?eventName=" +
-        '"' +
+        "'" +
         eventName +
-        '"' +
+        "'" +
         "&eventLocalization=" +
-        '"' +
+        "'" +
         eventLocalization +
-        '"' +
+        "'" +
         "&eventFrom=" +
-        '"' +
+        "'" +
         dateFrom +
-        '"' +
+        "'" +
         "&eventTo=" +
         dateTo
     )

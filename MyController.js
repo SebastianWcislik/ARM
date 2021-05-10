@@ -2,6 +2,7 @@ const express = require("express");
 const mySql = require("mysql");
 const nodemailer = require("nodemailer");
 const rateLimit = require("express-rate-limit");
+const bodyparser = require("body-parser");
 
 const connection = mySql.createPool({
   host: "db-mysql-fra1-95681-do-user-9198283-0.b.db.ondigitalocean.com", // Adress to your database (localhost)
@@ -12,6 +13,11 @@ const connection = mySql.createPool({
 });
 
 const app = express();
+
+app.use(bodyparser.urlencoded({ extended: false }));
+
+// Parse request of content-type - application/json
+app.use(bodyparser.json());
 
 // Ustawienie limitu odpytań do 100 na 5 minut na każdego użytkownika
 const limiter = rateLimit({

@@ -16,13 +16,13 @@ export function login(email, password) {
   var result = fetch(
     serwerAdress +
       "/getPassword?email=" +
-      '"' +
+      "'" +
       email +
-      '"' +
+      "'" +
       "&password=" +
-      '"' +
+      "'" +
       password +
-      '"'
+      "'"
   )
     .then((response) => response.json())
     .then((json) => {
@@ -38,14 +38,4 @@ export function login(email, password) {
     });
 
   return result;
-}
-
-export function createAccount(email, password, shouldSucceed = true) {
-  console.log(email, password);
-
-  if (!shouldSucceed) {
-    return mockFailure({ error: 500, message: "Something went wrong!" });
-  }
-
-  return mockSuccess({ auth_token: "successful_fake_token" });
 }
