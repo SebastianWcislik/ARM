@@ -64,7 +64,8 @@ app.get("/eventById", function (req, res) {
   connection.getConnection(function (err, connection) {
     var Id = req.query.Id;
     connection.query(
-      "SELECT Name, DateFrom, DateTo, Localization FROM events WHERE Id=" + Id,
+      "SELECT Id, Name, DateFrom, DateTo, Localization FROM events WHERE Id=" +
+        Id,
       function (error, results, fields) {
         if (error) throw error;
 
