@@ -49,7 +49,7 @@ app.get("/users", function (req, res) {
 app.get("/events", function (req, res) {
   connection.getConnection(function (err, connection) {
     connection.query(
-      "SELECT Name, DateFrom, DateTo FROM events",
+      "SELECT Id, Name, DateFrom, DateTo FROM events",
       function (error, results, fields) {
         if (error) throw error;
 

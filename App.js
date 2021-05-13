@@ -604,7 +604,8 @@ export function ARMUserRegistration({ navigation }) {
   const validateEmail = (email) => {
     setEmailErrMessage("");
     setEmail(email);
-    var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    var re =
+      /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     var result = re.test(email);
     if (result == false) {
       setEmailErrMessage("Wpisano niepoprawny email");
@@ -851,6 +852,7 @@ export function ARMEvents({ navigation }) {
     fetch(serwerAdress + "/events")
       .then((response) => response.json())
       .then((json) => {
+        console.log(json);
         setEvents(json);
       });
   };
@@ -864,6 +866,7 @@ export function ARMEvents({ navigation }) {
   };
 
   const GetEventDetails = (Id) => {
+    console.log(Id);
     setEventToken(Id);
     navigation.navigate("Informacje o Wydarzeniu", {
       name: "Informacja o Wydarzeniu",
@@ -1236,7 +1239,8 @@ export function ARMAddEvent({ navigation }) {
     setErrMessage("");
     setEventFrom(date);
     if (date == null || date == "") return;
-    var re = /^([1-9]|([012][0-9])|(3[01]))-([0]{0,1}[1-9]|1[012])-\d\d\d\d\s([0-1]?[0-9]|2?[0-3]):([0-5]\d)$/;
+    var re =
+      /^([1-9]|([012][0-9])|(3[01]))-([0]{0,1}[1-9]|1[012])-\d\d\d\d\s([0-1]?[0-9]|2?[0-3]):([0-5]\d)$/;
     var result = re.test(date);
     if (result == false) {
       setErrFromMessage(
@@ -1255,7 +1259,8 @@ export function ARMAddEvent({ navigation }) {
     setErrMessage("");
     setEventTo(date);
     if (date == null || date == "") return;
-    var re = /^([1-9]|([012][0-9])|(3[01]))-([0]{0,1}[1-9]|1[012])-\d\d\d\d\s([0-1]?[0-9]|2?[0-3]):([0-5]\d)$/;
+    var re =
+      /^([1-9]|([012][0-9])|(3[01]))-([0]{0,1}[1-9]|1[012])-\d\d\d\d\s([0-1]?[0-9]|2?[0-3]):([0-5]\d)$/;
     var result = re.test(date);
     if (result == false) {
       setErrToMessage(
