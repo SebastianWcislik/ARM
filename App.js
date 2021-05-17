@@ -1047,22 +1047,23 @@ export function ARMEventDetails({ navigation }) {
   };
 
   const QuitEvent = () => {
-    fetch(serwerAdress + "/getUserInEvent?Email=" + "'" + loggedUser + "'")
+    fetch(serwerAdress + "/getUserInEvent/" + "'" + loggedUser + "'")
       .then((res) => res.json())
       .then((json) =>
-        fetch(serwerAdress + "/deleteFromEvent?Id=" + json[0].Id).then(
-          (response) =>
-            response.json().then((json) => {
-              if (json[0].result == 0)
-                setErrMessage(
-                  "Wystąpił błąd w trakcie opuszczania wydarzenia, spróbuj ponownie"
-                );
-              if (json[0].result == 1) {
-                setErrMessage("Udało się opuścić wydarzenie");
-                GetUsersInEvent();
-                setShouldShow(!shouldShow);
-              }
-            })
+        fetch(
+          serwerAdress + "/deleteFromEvent/" + json[0].Id + "/" + eventId
+        ).then((response) =>
+          response.json().then((json) => {
+            if (json[0].result == 0)
+              setErrMessage(
+                "Wystąpił błąd w trakcie opuszczania wydarzenia, spróbuj ponownie"
+              );
+            if (json[0].result == 1) {
+              setErrMessage("Udało się opuścić wydarzenie");
+              GetUsersInEvent();
+              setShouldShow(!shouldShow);
+            }
+          })
         )
       );
   };
