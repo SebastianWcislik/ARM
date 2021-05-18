@@ -15,11 +15,11 @@ const mockFailure = (value) => {
 export function login(email, password) {
   var result = fetch(
     serwerAdress +
-      "/getPassword?email=" +
+      "/getPassword/" +
       "'" +
       email +
       "'" +
-      "&password=" +
+      "/" +
       "'" +
       password +
       "'"

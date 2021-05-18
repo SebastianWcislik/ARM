@@ -192,7 +192,7 @@ export function ARMUsersList({ navigation }) {
 
   const GetRoles = () => {
     getToken().then((res) => {
-      fetch(serwerAdress + "/getRoles?email=" + "'" + res + "'")
+      fetch(serwerAdress + "/getRoles/" + "'" + res + "'")
         .then((response) => response.json())
         .then((json) => {
           setRoleToken(json[0].Name);
@@ -205,12 +205,13 @@ export function ARMUsersList({ navigation }) {
     navigation.navigate("Informacje o Użytkowniku", { name: "Informacje" });
   };
 
-  // onScreenLoad
-  useEffect(() => {
-    GetLoggedUser();
-    GetList();
-    GetRoles();
-  }, []);
+  useFocusEffect(
+    React.useCallback(() => {
+      GetLoggedUser();
+      GetList();
+      GetRoles();
+    }, [])
+  );
 
   return (
     <SafeAreaView style={styles.body} onTouchStart={Keyboard.dismiss}>
@@ -316,12 +317,12 @@ export function ARMMyProfile({ navigation }) {
   const GetLoggedUser = () => {
     getToken().then((res) => {
       setLoggedUser(res);
-      fetch(serwerAdress + "/getUserInfo?email=" + "'" + res + "'")
+      fetch(serwerAdress + "/getUserInfo/" + "'" + res + "'")
         .then((response) => response.json())
         .then((json) => {
-          setUserName(json[0].Name);
-          setUserEmail(json[0].Email);
-          setCurrentState(json[0].State);
+          setUserName(json.Name);
+          setUserEmail(json.Email);
+          setCurrentState(json.State);
         });
     });
   };
@@ -329,11 +330,11 @@ export function ARMMyProfile({ navigation }) {
   const SetUserState = () => {
     fetch(
       serwerAdress +
-        "/getUserState?email=" +
+        "/getUserState/" +
         "'" +
         userEmail +
         "'" +
-        "&state=" +
+        "/" +
         "'" +
         selectedState +
         "'"
@@ -448,10 +449,10 @@ export function ARMChangePassword({ navigation }) {
   const GetLoggedUser = () => {
     getToken().then((res) => {
       setLoggedUser(res);
-      fetch(serwerAdress + "/getUserInfo?email=" + "'" + res + "'")
+      fetch(serwerAdress + "/getUserInfo/" + "'" + res + "'")
         .then((response) => response.json())
         .then((json) => {
-          setUserEmail(json[0].Email);
+          setUserEmail(json.Email);
         });
     });
   };
@@ -461,11 +462,11 @@ export function ARMChangePassword({ navigation }) {
 
     fetch(
       serwerAdress +
-        "/getPassword?email=" +
+        "/getPassword/" +
         "'" +
         userEmail +
         "'" +
-        "&password=" +
+        "/" +
         "'" +
         oldPassword +
         "'"
@@ -488,11 +489,11 @@ export function ARMChangePassword({ navigation }) {
 
     fetch(
       serwerAdress +
-        "/setPassword?email=" +
+        "/setPassword/" +
         "'" +
         userEmail +
         "'" +
-        "&password=" +
+        "/" +
         "'" +
         newPassword +
         "'"
@@ -620,7 +621,7 @@ export function ARMUserRegistration({ navigation }) {
   };
 
   const IsThereUser = () => {
-    fetch(serwerAdress + "/isThereUser?email=" + "'" + email + "'")
+    fetch(serwerAdress + "/isThereUser/" + "'" + email + "'")
       .then((response) => response.json())
       .then((json) => {
         if (json[0].result == 1) setErrMessage("Podany email już istnieje");
@@ -635,19 +636,19 @@ export function ARMUserRegistration({ navigation }) {
   const CreateUser = () => {
     fetch(
       serwerAdress +
-        "/createUser?email=" +
+        "/createUser/" +
         "'" +
         email +
         "'" +
-        "&password=" +
-        "'" +
-        password +
-        "'" +
-        "&name=" +
+        "/" +
         "'" +
         name +
         "'" +
-        "&role=" +
+        "/" +
+        "'" +
+        password +
+        "'" +
+        "/" +
         "'" +
         role +
         "'"
@@ -667,7 +668,7 @@ export function ARMUserRegistration({ navigation }) {
   };
 
   const sendRegistrationEmail = () => {
-    fetch(serwerAdress + "/sendMail?password=" + password + "&email=" + email);
+    fetch(serwerAdress + "/sendMail/" + password + "/" + email);
   };
 
   useEffect(() => {
@@ -783,13 +784,13 @@ export function ARMUserDetails({ navigation }) {
 
   const GetSelectedUserInfo = () => {
     getEmailToken().then((res) => {
-      fetch(serwerAdress + "/getSelectedUserInfo?email=" + "'" + res + "'")
+      fetch(serwerAdress + "/getSelectedUserInfo/" + "'" + res + "'")
         .then((response) => response.json())
         .then((json) => {
-          setUserName(json[0].Name);
-          setUserEmail(json[0].Email);
-          setCurrentState(json[0].State);
-          setUserRole(json[0].RoleName);
+          setUserName(json.Name ? json.Name : json[0].Name);
+          setUserEmail(json.Email ? json.Email : json[0].Email);
+          setCurrentState(json.State ? json.State : json[0].State);
+          setUserRole(json.RoleName ? json.RoleName : json[0].RoleName);
         });
     });
   };
@@ -829,11 +830,9 @@ export function ARMUserDetails({ navigation }) {
 
           <TouchableOpacity
             style={navigationStyle.navigationButton}
-            onPress={() => navigation.navigate("ARM", { name: "ARM" })}
+            onPress={() => navigation.goBack()}
           >
-            <Text style={navigationStyle.navigationButtonText}>
-              Powrót do listy
-            </Text>
+            <Text style={navigationStyle.navigationButtonText}>Powrót</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -852,7 +851,6 @@ export function ARMEvents({ navigation }) {
     fetch(serwerAdress + "/events")
       .then((response) => response.json())
       .then((json) => {
-        console.log(json);
         setEvents(json);
       });
   };
@@ -866,7 +864,6 @@ export function ARMEvents({ navigation }) {
   };
 
   const GetEventDetails = (Id) => {
-    console.log(Id);
     setEventToken(Id);
     navigation.navigate("Informacje o Wydarzeniu", {
       name: "Informacja o Wydarzeniu",
@@ -990,23 +987,27 @@ export function ARMEventDetails({ navigation }) {
 
   const GetEventInfo = () => {
     getEventToken().then((res) =>
-      fetch(serwerAdress + "/eventById?Id=" + res)
+      fetch(serwerAdress + "/getEventById/" + res)
         .then((response) => response.json())
         .then((json) => {
-          setEventId(json[0].Id);
-          setEventName(json[0].Name);
-          setEventLokalization(json[0].Localization);
-          setEventFrom(json[0].DateFrom);
-          setEventTo(json[0].DateTo);
+          setEventId(json.Id);
+          setEventName(json.Name);
+          setEventLokalization(json.Localization);
+          setEventFrom(json.DateFrom);
+          setEventTo(json.DateTo);
         })
     );
   };
 
   const GetUsersInEvent = () => {
     getEventToken().then((res) => {
-      fetch(serwerAdress + "/getUsersInEvent?eventId=" + res)
+      fetch(serwerAdress + "/getUsersInEvents/" + res)
         .then((res) => res.json())
         .then((json) => {
+          if (json.result == 0) {
+            setUsersInEvents([]);
+            return;
+          }
           setUsersInEvents(json);
           getToken().then((res) => {
             for (var i = 0; i < json.length; i++) {
@@ -1021,16 +1022,10 @@ export function ARMEventDetails({ navigation }) {
   };
 
   const AddToEvent = () => {
-    fetch(serwerAdress + "/getUserInfo?email=" + "'" + loggedUser + "'")
+    fetch(serwerAdress + "/getUserInfo/" + "'" + loggedUser + "'")
       .then((res) => res.json())
       .then((json) => {
-        fetch(
-          serwerAdress +
-            "/addToEvent?userId=" +
-            json[0].Id +
-            "&eventId=" +
-            eventId
-        )
+        fetch(serwerAdress + "/addToEvent/" + json[0].Id + "/" + eventId)
           .then((json) => json.json())
           .then((response) => {
             if (response[0].result == 0)
@@ -1069,7 +1064,7 @@ export function ARMEventDetails({ navigation }) {
   };
 
   const DeleteEvent = () => {
-    fetch(serwerAdress + "/deleteEvent?eventId=" + eventId).then(() => {
+    fetch(serwerAdress + "/deleteEvent/" + eventId).then(() => {
       navigation.navigate("Wydarzenia", { name: "Wydarzenia" });
     });
   };
@@ -1235,45 +1230,45 @@ export function ARMAddEvent({ navigation }) {
     setEventTo(date);
   };
 
-  const validateFromDate = (date) => {
-    setErrFromMessage("");
-    setErrMessage("");
-    setEventFrom(date);
-    if (date == null || date == "") return;
-    var re =
-      /^([1-9]|([012][0-9])|(3[01]))-([0]{0,1}[1-9]|1[012])-\d\d\d\d\s([0-1]?[0-9]|2?[0-3]):([0-5]\d)$/;
-    var result = re.test(date);
-    if (result == false) {
-      setErrFromMessage(
-        "Wpisano niepoprawną datę rozpoczęcia \nData powinna mieć format dd-mm-yyyy hh:mm"
-      );
-    }
+  // const validateFromDate = (date) => {
+  //   setErrFromMessage("");
+  //   setErrMessage("");
+  //   setEventFrom(date);
+  //   if (date == null || date == "") return;
+  //   var re =
+  //     /^([1-9]|([012][0-9])|(3[01]))-([0]{0,1}[1-9]|1[012])-\d\d\d\d\s([0-1]?[0-9]|2?[0-3]):([0-5]\d)$/;
+  //   var result = re.test(date);
+  //   if (result == false) {
+  //     setErrFromMessage(
+  //       "Wpisano niepoprawną datę rozpoczęcia \nData powinna mieć format dd-mm-yyyy hh:mm"
+  //     );
+  //   }
 
-    if (result == true) {
-      setErrMessage("");
-      setErrFromMessage("");
-    }
-  };
+  //   if (result == true) {
+  //     setErrMessage("");
+  //     setErrFromMessage("");
+  //   }
+  // };
 
-  const validateToDate = (date) => {
-    setErrToMessage("");
-    setErrMessage("");
-    setEventTo(date);
-    if (date == null || date == "") return;
-    var re =
-      /^([1-9]|([012][0-9])|(3[01]))-([0]{0,1}[1-9]|1[012])-\d\d\d\d\s([0-1]?[0-9]|2?[0-3]):([0-5]\d)$/;
-    var result = re.test(date);
-    if (result == false) {
-      setErrToMessage(
-        "Wpisano niepoprawną datę zakończenia \nData powinna mieć format dd-mm-yyyy hh:mm"
-      );
-    }
+  // const validateToDate = (date) => {
+  //   setErrToMessage("");
+  //   setErrMessage("");
+  //   setEventTo(date);
+  //   if (date == null || date == "") return;
+  //   var re =
+  //     /^([1-9]|([012][0-9])|(3[01]))-([0]{0,1}[1-9]|1[012])-\d\d\d\d\s([0-1]?[0-9]|2?[0-3]):([0-5]\d)$/;
+  //   var result = re.test(date);
+  //   if (result == false) {
+  //     setErrToMessage(
+  //       "Wpisano niepoprawną datę zakończenia \nData powinna mieć format dd-mm-yyyy hh:mm"
+  //     );
+  //   }
 
-    if (result == true) {
-      setErrMessage("");
-      setErrToMessage("");
-    }
-  };
+  //   if (result == true) {
+  //     setErrMessage("");
+  //     setErrToMessage("");
+  //   }
+  // };
 
   const AddEvent = () => {
     setErrMessage("");
@@ -1292,7 +1287,7 @@ export function ARMAddEvent({ navigation }) {
     if (eventTo != null || eventTo != "") {
       if (new Date(eventFrom) > new Date(eventTo)) {
         setErrMessage(
-          "Data rozpoczęcia nie może być mniejsza od daty zakończenia"
+          "Data rozpoczęcia nie może być wcześniejsza od daty zakończenia"
         );
         return;
       }
@@ -1312,19 +1307,19 @@ export function ARMAddEvent({ navigation }) {
 
     fetch(
       serwerAdress +
-        "/addEvent?eventName=" +
+        "/addEvent/" +
         "'" +
         eventName +
         "'" +
-        "&eventLocalization=" +
+        "/" +
         "'" +
         eventLocalization +
         "'" +
-        "&eventFrom=" +
+        "/" +
         "'" +
         dateFrom +
         "'" +
-        "&eventTo=" +
+        "/" +
         dateTo
     )
       .then((res) => res.json())
