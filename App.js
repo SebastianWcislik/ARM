@@ -28,11 +28,19 @@ import {
   TouchableOpacity,
   TextInput,
   Keyboard,
+  TouchableWithoutFeedback,
+  Platform,
 } from "react-native";
 
 // Deklaracja zmiennych globalnych
 
 const serwerAdress = "https://arm-dev.herokuapp.com"; // API
+
+const dismissKeyboard = () => {
+  if (Platform.OS != "web") {
+    Keyboard.dismiss();
+  }
+};
 
 // APP
 
@@ -113,6 +121,16 @@ export function ARMLogin({ navigation }) {
   const loginUser = () => {
     setErrMessage("");
 
+    if (email == null || email == "") {
+      setErrMessage("Wpisz adres email");
+      return;
+    }
+
+    if (password == null || password == "") {
+      setErrMessage("Wpisz hasło");
+      return;
+    }
+
     login(email, password)
       .then(async (res) => {
         await setToken(res.loggedUser);
@@ -140,35 +158,37 @@ export function ARMLogin({ navigation }) {
   // };
 
   return (
-    <SafeAreaView style={styles.body} onTouchStart={Keyboard.dismiss}>
-      <View>
-        <Text style={styles.title}>Logowanie</Text>
-        <TextInput
-          style={styles.textInputStyle}
-          placeholder="Nazwa użytkownika"
-          value={email}
-          onChangeText={(val) => setEmail(val)}
-        />
-        <TextInput
-          style={styles.textInputStyle}
-          placeholder="Hasło"
-          value={password}
-          secureTextEntry={true}
-          onChangeText={(val) => setPassword(val)}
-        />
-        <TouchableOpacity
-          style={navigationStyle.loginButton}
-          onPress={loginUser}
-        >
-          <Text style={navigationStyle.navigationButtonText}>Zaloguj</Text>
-        </TouchableOpacity>
-        {errMessage ? (
-          <View style={styles.errMessageStyle}>
-            <Text style={styles.errMessageColor}>{errMessage}</Text>
-          </View>
-        ) : null}
-      </View>
-    </SafeAreaView>
+    <TouchableWithoutFeedback onPress={() => dismissKeyboard()}>
+      <SafeAreaView style={styles.body}>
+        <View>
+          <Text style={styles.title}>Logowanie</Text>
+          <TextInput
+            style={styles.textInputStyle}
+            placeholder="Nazwa użytkownika"
+            value={email}
+            onChangeText={(val) => setEmail(val)}
+          />
+          <TextInput
+            style={styles.textInputStyle}
+            placeholder="Hasło"
+            value={password}
+            secureTextEntry={true}
+            onChangeText={(val) => setPassword(val)}
+          />
+          <TouchableOpacity
+            style={navigationStyle.loginButton}
+            onPress={loginUser}
+          >
+            <Text style={navigationStyle.navigationButtonText}>Zaloguj</Text>
+          </TouchableOpacity>
+          {errMessage ? (
+            <View style={styles.errMessageStyle}>
+              <Text style={styles.errMessageColor}>{errMessage}</Text>
+            </View>
+          ) : null}
+        </View>
+      </SafeAreaView>
+    </TouchableWithoutFeedback>
   );
 }
 
@@ -214,7 +234,7 @@ export function ARMUsersList({ navigation }) {
   );
 
   return (
-    <SafeAreaView style={styles.body} onTouchStart={Keyboard.dismiss}>
+    <SafeAreaView style={styles.body}>
       <Text style={styles.loggedUserStyle}>
         Zalogowany jako, {loggedUser ? loggedUser : null}
       </Text>
@@ -351,7 +371,7 @@ export function ARMMyProfile({ navigation }) {
   }, []);
 
   return (
-    <SafeAreaView style={styles.body} onTouchStart={Keyboard.dismiss}>
+    <SafeAreaView style={styles.body}>
       <Text style={styles.loggedUserStyle}>
         Zalogowany jako, {loggedUser ? loggedUser : null}
       </Text>
@@ -518,68 +538,70 @@ export function ARMChangePassword({ navigation }) {
   }, []);
 
   return (
-    <SafeAreaView style={styles.body} onTouchStart={Keyboard.dismiss}>
-      <Text style={styles.loggedUserStyle}>
-        Zalogowany jako, {loggedUser ? loggedUser : null}
-      </Text>
-      <View>
-        <Text style={styles.title}>Zmiana hasła</Text>
+    <TouchableWithoutFeedback onPress={() => dismissKeyboard()}>
+      <SafeAreaView style={styles.body}>
+        <Text style={styles.loggedUserStyle}>
+          Zalogowany jako, {loggedUser ? loggedUser : null}
+        </Text>
         <View>
-          {shouldShow ? (
-            <View>
-              <TextInput
-                secureTextEntry={true}
-                style={myProfile.newPasswordText}
-                placeholder="Podaj stare hasło"
-                value={oldPassword}
-                onChangeText={(val) => setOldPassword(val)}
-              />
-              <TouchableOpacity
-                style={navigationStyle.navigationButton}
-                onPress={GetUserPassword}
-              >
-                <Text style={navigationStyle.navigationButtonText}>
-                  Zmień hasło
-                </Text>
-              </TouchableOpacity>
-            </View>
-          ) : (
-            <View>
-              <TextInput
-                secureTextEntry={true}
-                style={myProfile.newPasswordText}
-                placeholder="Podaj nowe hasło"
-                value={newPassword}
-                onChangeText={(val) => setNewPassword(val)}
-              />
-              <TouchableOpacity
-                style={navigationStyle.navigationButton}
-                onPress={SetUserPassword}
-              >
-                <Text style={navigationStyle.navigationButtonText}>
-                  Zmień hasło
-                </Text>
-              </TouchableOpacity>
-            </View>
-          )}
-          {errMessage ? (
-            <View style={styles.errMessageStyle}>
-              <Text style={styles.errMessageColor}>{errMessage}</Text>
-            </View>
-          ) : null}
-          <TouchableOpacity
-            style={navigationStyle.navigationButton}
-            onPress={() =>
-              navigation.navigate("Mój profil", { name: "Mój profil" })
-            }
-          >
-            <Text style={navigationStyle.navigationButtonText}>
-              Powrót do mojego profilu
-            </Text>
-          </TouchableOpacity>
+          <Text style={styles.title}>Zmiana hasła</Text>
+          <View>
+            {shouldShow ? (
+              <View>
+                <TextInput
+                  secureTextEntry={true}
+                  style={myProfile.newPasswordText}
+                  placeholder="Podaj stare hasło"
+                  value={oldPassword}
+                  onChangeText={(val) => setOldPassword(val)}
+                />
+                <TouchableOpacity
+                  style={navigationStyle.navigationButton}
+                  onPress={GetUserPassword}
+                >
+                  <Text style={navigationStyle.navigationButtonText}>
+                    Zmień hasło
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            ) : (
+              <View>
+                <TextInput
+                  secureTextEntry={true}
+                  style={myProfile.newPasswordText}
+                  placeholder="Podaj nowe hasło"
+                  value={newPassword}
+                  onChangeText={(val) => setNewPassword(val)}
+                />
+                <TouchableOpacity
+                  style={navigationStyle.navigationButton}
+                  onPress={SetUserPassword}
+                >
+                  <Text style={navigationStyle.navigationButtonText}>
+                    Zmień hasło
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            )}
+            {errMessage ? (
+              <View style={styles.errMessageStyle}>
+                <Text style={styles.errMessageColor}>{errMessage}</Text>
+              </View>
+            ) : null}
+            <TouchableOpacity
+              style={navigationStyle.navigationButton}
+              onPress={() =>
+                navigation.navigate("Mój profil", { name: "Mój profil" })
+              }
+            >
+              <Text style={navigationStyle.navigationButtonText}>
+                Powrót do mojego profilu
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
-    </SafeAreaView>
+      </SafeAreaView>
+    </TouchableWithoutFeedback>
   );
 }
 
@@ -676,95 +698,99 @@ export function ARMUserRegistration({ navigation }) {
   }, []);
 
   return (
-    <SafeAreaView style={styles.body} onTouchStart={Keyboard.dismiss}>
-      <Text style={styles.loggedUserStyle}>
-        Zalogowany jako, {loggedUser ? loggedUser : null}
-      </Text>
-      <View>
-        <Text style={styles.title}>Rejestracja nowego użytkownika</Text>
+    <TouchableWithoutFeedback onPress={() => dismissKeyboard()}>
+      <SafeAreaView style={styles.body}>
+        <Text style={styles.loggedUserStyle}>
+          Zalogowany jako, {loggedUser ? loggedUser : null}
+        </Text>
         <View>
-          {shouldShow ? (
-            <View>
-              <TextInput
-                style={myProfile.registrationText}
-                placeholder="Podaj email"
-                value={email}
-                onChangeText={(val) => validateEmail(val)}
-              />
-              {emailErrMessage ? (
-                <View style={styles.errMessageStyle}>
-                  <Text style={styles.errMessageColor}>{emailErrMessage}</Text>
-                </View>
-              ) : null}
-              <TouchableOpacity
-                style={navigationStyle.navigationButton}
-                disabled={shouldDisable}
-                onPress={IsThereUser}
-              >
-                <Text style={navigationStyle.navigationButtonText}>
-                  Zarejestruj
-                </Text>
-              </TouchableOpacity>
-            </View>
-          ) : (
-            <View>
-              <TextInput
-                style={myProfile.registrationText}
-                placeholder="Podaj email"
-                value={email}
-                editable={shouldShow}
-                onChangeText={(val) => setEmail(val)}
-              />
-              <TextInput
-                style={myProfile.registrationText}
-                placeholder="Podaj Imię użytkownika"
-                value={name}
-                onChangeText={(val) => setName(val)}
-              />
-              <TextInput
-                secureTextEntry={true}
-                style={myProfile.registrationText}
-                placeholder="Podaj tymczasowe hasło"
-                value={password}
-                onChangeText={(val) => setPassword(val)}
-              />
-              <Picker
-                selectedValue={role}
-                style={myProfile.statePicker}
-                onValueChange={(itemValue, itemIndex) => setRole(itemValue)}
-              >
-                <Picker.Item label="Admin" value="1" />
-                <Picker.Item label="Koordynator" value="2" />
-                <Picker.Item label="Użytkownik" value="3" />
-              </Picker>
-              <TouchableOpacity
-                style={navigationStyle.navigationButton}
-                onPress={CreateUser}
-              >
-                <Text style={navigationStyle.navigationButtonText}>
-                  Zarejestruj
-                </Text>
-              </TouchableOpacity>
-            </View>
-          )}
-          {errMessage ? (
-            <View style={styles.errMessageStyle}>
-              <Text style={styles.errMessageColor}>{errMessage}</Text>
-            </View>
-          ) : null}
-          <TouchableOpacity
-            style={navigationStyle.navigationButton}
-            onPress={() =>
-              navigation.navigate("Mój profil", { name: "Mój profil" })
-            }
-          >
-            <Text style={navigationStyle.navigationButtonText}>
-              Powrót do mojego profilu
-            </Text>
-          </TouchableOpacity>
+          <Text style={styles.title}>Rejestracja nowego użytkownika</Text>
+          <View>
+            {shouldShow ? (
+              <View>
+                <TextInput
+                  style={myProfile.registrationText}
+                  placeholder="Podaj email"
+                  value={email}
+                  onChangeText={(val) => validateEmail(val)}
+                />
+                {emailErrMessage ? (
+                  <View style={styles.errMessageStyle}>
+                    <Text style={styles.errMessageColor}>
+                      {emailErrMessage}
+                    </Text>
+                  </View>
+                ) : null}
+                <TouchableOpacity
+                  style={navigationStyle.navigationButton}
+                  disabled={shouldDisable}
+                  onPress={IsThereUser}
+                >
+                  <Text style={navigationStyle.navigationButtonText}>
+                    Zarejestruj
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            ) : (
+              <View>
+                <TextInput
+                  style={myProfile.registrationText}
+                  placeholder="Podaj email"
+                  value={email}
+                  editable={shouldShow}
+                  onChangeText={(val) => setEmail(val)}
+                />
+                <TextInput
+                  style={myProfile.registrationText}
+                  placeholder="Podaj Imię użytkownika"
+                  value={name}
+                  onChangeText={(val) => setName(val)}
+                />
+                <TextInput
+                  secureTextEntry={true}
+                  style={myProfile.registrationText}
+                  placeholder="Podaj tymczasowe hasło"
+                  value={password}
+                  onChangeText={(val) => setPassword(val)}
+                />
+                <Picker
+                  selectedValue={role}
+                  style={myProfile.statePicker}
+                  onValueChange={(itemValue, itemIndex) => setRole(itemValue)}
+                >
+                  <Picker.Item label="Admin" value="1" />
+                  <Picker.Item label="Koordynator" value="2" />
+                  <Picker.Item label="Użytkownik" value="3" />
+                </Picker>
+                <TouchableOpacity
+                  style={navigationStyle.navigationButton}
+                  onPress={CreateUser}
+                >
+                  <Text style={navigationStyle.navigationButtonText}>
+                    Zarejestruj
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            )}
+            {errMessage ? (
+              <View style={styles.errMessageStyle}>
+                <Text style={styles.errMessageColor}>{errMessage}</Text>
+              </View>
+            ) : null}
+            <TouchableOpacity
+              style={navigationStyle.navigationButton}
+              onPress={() =>
+                navigation.navigate("Mój profil", { name: "Mój profil" })
+              }
+            >
+              <Text style={navigationStyle.navigationButtonText}>
+                Powrót do mojego profilu
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
-    </SafeAreaView>
+      </SafeAreaView>
+    </TouchableWithoutFeedback>
   );
 }
 
@@ -801,7 +827,7 @@ export function ARMUserDetails({ navigation }) {
   }, []);
 
   return (
-    <SafeAreaView style={styles.body} onTouchStart={Keyboard.dismiss}>
+    <SafeAreaView style={styles.body}>
       <Text style={styles.loggedUserStyle}>
         Zalogowany jako, {loggedUser ? loggedUser : null}
       </Text>
@@ -880,7 +906,7 @@ export function ARMEvents({ navigation }) {
   );
 
   return (
-    <SafeAreaView style={styles.body} onTouchStart={Keyboard.dismiss}>
+    <SafeAreaView style={styles.body}>
       <Text style={styles.loggedUserStyle}>
         Zalogowany jako, {loggedUser ? loggedUser : null}
       </Text>
@@ -1077,7 +1103,7 @@ export function ARMEventDetails({ navigation }) {
   }, []);
 
   return (
-    <SafeAreaView style={styles.body} onTouchStart={Keyboard.dismiss}>
+    <SafeAreaView style={styles.body}>
       <Text style={styles.loggedUserStyle}>
         Zalogowany jako, {loggedUser ? loggedUser : null}
       </Text>
@@ -1342,91 +1368,95 @@ export function ARMAddEvent({ navigation }) {
   }, []);
 
   return (
-    <SafeAreaView style={styles.body} onTouchStart={Keyboard.dismiss}>
-      <Text style={styles.loggedUserStyle}>
-        Zalogowany jako, {loggedUser ? loggedUser : null}
-      </Text>
-      <View style={{ width: 300 }}>
-        <Text style={styles.title}>Dodaj wydarzenie</Text>
-        <View>
-          <TextInput
-            style={styles.textInputStyle}
-            placeholder="Nazwa wydarzenia"
-            value={eventName}
-            onChangeText={(val) => eventNameInput(val)}
-          />
-          {errEventName ? (
-            <View style={styles.eventErrMessageStyle}>
-              <Text style={styles.errMessageColor}>{errEventName}</Text>
-            </View>
-          ) : null}
-          <TextInput
-            style={styles.textInputStyle}
-            placeholder="Podaj lokalizację"
-            value={eventLocalization}
-            onChangeText={(val) => eventLocalizationInput(val)}
-          />
-          {errEventLocalization ? (
-            <View style={styles.eventErrMessageStyle}>
-              <Text style={styles.errMessageColor}>{errEventLocalization}</Text>
-            </View>
-          ) : null}
-          <DateTimePickerModal
-            visible={visibleFrom}
-            onDismiss={onDismissFrom}
-            date={eventFrom}
-            onConfirm={(val) => onChangeFrom(val)}
-          />
-          <TouchableOpacity onPress={() => setVisibleFrom(true)}>
-            <Text>Wybierz datę rozpoczęcia</Text>
-            <Text>{Moment(eventFrom).format("DD-MM-yyyy HH:mm")}</Text>
-          </TouchableOpacity>
-          {errFromMessage ? (
-            <View style={styles.eventErrMessageStyle}>
-              <Text style={styles.errMessageColor}>{errFromMessage}</Text>
-            </View>
-          ) : null}
-          <DateTimePickerModal
-            visible={visibleTo}
-            onDismiss={onDismissTo}
-            date={eventTo}
-            onConfirm={(val) => onChangeTo(val)}
-          />
-          <TouchableOpacity onPress={() => setVisibleTo(true)}>
-            <Text>Wybierz datę zakończenia</Text>
-            <Text>{Moment(eventTo).format("DD-MM-yyyy HH:mm")}</Text>
-          </TouchableOpacity>
-          {errToMessage ? (
-            <View style={styles.eventErrMessageStyle}>
-              <Text style={styles.errMessageColor}>{errToMessage}</Text>
-            </View>
-          ) : null}
-          <TouchableOpacity
-            style={navigationStyle.navigationButton}
-            onPress={AddEvent}
-          >
-            <Text style={navigationStyle.navigationButtonText}>
-              Dodaj wydarzenie
-            </Text>
-          </TouchableOpacity>
-          {errMessage ? (
-            <View style={styles.eventErrMessageStyle}>
-              <Text style={styles.errMessageColor}>{errMessage}</Text>
-            </View>
-          ) : null}
-          <TouchableOpacity
-            style={navigationStyle.navigationButton}
-            onPress={() =>
-              navigation.navigate("Wydarzenia", { name: "Wydarzenia" })
-            }
-          >
-            <Text style={navigationStyle.navigationButtonText}>
-              Powrót do wydarzeń
-            </Text>
-          </TouchableOpacity>
+    <TouchableWithoutFeedback onPress={() => dismissKeyboard()}>
+      <SafeAreaView style={styles.body}>
+        <Text style={styles.loggedUserStyle}>
+          Zalogowany jako, {loggedUser ? loggedUser : null}
+        </Text>
+        <View style={{ width: 300 }}>
+          <Text style={styles.title}>Dodaj wydarzenie</Text>
+          <View>
+            <TextInput
+              style={styles.textInputStyle}
+              placeholder="Nazwa wydarzenia"
+              value={eventName}
+              onChangeText={(val) => eventNameInput(val)}
+            />
+            {errEventName ? (
+              <View style={styles.eventErrMessageStyle}>
+                <Text style={styles.errMessageColor}>{errEventName}</Text>
+              </View>
+            ) : null}
+            <TextInput
+              style={styles.textInputStyle}
+              placeholder="Podaj lokalizację"
+              value={eventLocalization}
+              onChangeText={(val) => eventLocalizationInput(val)}
+            />
+            {errEventLocalization ? (
+              <View style={styles.eventErrMessageStyle}>
+                <Text style={styles.errMessageColor}>
+                  {errEventLocalization}
+                </Text>
+              </View>
+            ) : null}
+            <DateTimePickerModal
+              visible={visibleFrom}
+              onDismiss={onDismissFrom}
+              date={eventFrom}
+              onConfirm={(val) => onChangeFrom(val)}
+            />
+            <TouchableOpacity onPress={() => setVisibleFrom(true)}>
+              <Text>Wybierz datę rozpoczęcia</Text>
+              <Text>{Moment(eventFrom).format("DD-MM-yyyy HH:mm")}</Text>
+            </TouchableOpacity>
+            {errFromMessage ? (
+              <View style={styles.eventErrMessageStyle}>
+                <Text style={styles.errMessageColor}>{errFromMessage}</Text>
+              </View>
+            ) : null}
+            <DateTimePickerModal
+              visible={visibleTo}
+              onDismiss={onDismissTo}
+              date={eventTo}
+              onConfirm={(val) => onChangeTo(val)}
+            />
+            <TouchableOpacity onPress={() => setVisibleTo(true)}>
+              <Text>Wybierz datę zakończenia</Text>
+              <Text>{Moment(eventTo).format("DD-MM-yyyy HH:mm")}</Text>
+            </TouchableOpacity>
+            {errToMessage ? (
+              <View style={styles.eventErrMessageStyle}>
+                <Text style={styles.errMessageColor}>{errToMessage}</Text>
+              </View>
+            ) : null}
+            <TouchableOpacity
+              style={navigationStyle.navigationButton}
+              onPress={AddEvent}
+            >
+              <Text style={navigationStyle.navigationButtonText}>
+                Dodaj wydarzenie
+              </Text>
+            </TouchableOpacity>
+            {errMessage ? (
+              <View style={styles.eventErrMessageStyle}>
+                <Text style={styles.errMessageColor}>{errMessage}</Text>
+              </View>
+            ) : null}
+            <TouchableOpacity
+              style={navigationStyle.navigationButton}
+              onPress={() =>
+                navigation.navigate("Wydarzenia", { name: "Wydarzenia" })
+              }
+            >
+              <Text style={navigationStyle.navigationButtonText}>
+                Powrót do wydarzeń
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
-    </SafeAreaView>
+      </SafeAreaView>
+    </TouchableWithoutFeedback>
   );
 }
 
