@@ -5,6 +5,8 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { login } from "./API/mock";
 import Moment from "moment";
 import "moment/min/locales";
+import "intl";
+import "intl/locale-data/jsonp/pl";
 import { vw, vh } from "react-native-viewport-units-fix";
 import {
   getToken,
