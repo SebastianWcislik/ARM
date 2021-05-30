@@ -177,7 +177,7 @@ export default function ARMEventDetails({ navigation }) {
                       style={styles.events}
                       onPress={() => GetUserDetails(item.Email)}
                     >
-                      {item.UserName} - {item.Email}
+                      {item.UserName} - {item.Email} - {item.RoleName}
                     </Text>
                   </TouchableOpacity>
                 )}

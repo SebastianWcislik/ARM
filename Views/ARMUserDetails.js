@@ -7,6 +7,7 @@ import {
   View,
   SafeAreaView,
   TouchableOpacity,
+  Linking,
 } from "react-native";
 
 const serwerAdress = "https://arm-dev.herokuapp.com"; // API
@@ -18,6 +19,7 @@ export default function ARMUserDetails({ navigation }) {
   const [userEmail, setUserEmail] = useState("");
   const [userRole, setUserRole] = useState("");
   const [currentState, setCurrentState] = useState("");
+  const [userPhone, setUserPhone] = useState("");
 
   const GetLoggedUser = () => {
     getToken().then((res) => {
@@ -34,6 +36,7 @@ export default function ARMUserDetails({ navigation }) {
           setUserEmail(json.Email ? json.Email : json[0].Email);
           setCurrentState(json.State ? json.State : json[0].State);
           setUserRole(json.RoleName ? json.RoleName : json[0].RoleName);
+          setUserPhone(json.Phone ? json.Phone : json[0].Phone);
         });
     });
   };
@@ -56,6 +59,16 @@ export default function ARMUserDetails({ navigation }) {
           </Text>
           <Text style={myProfile.myData}>
             Email: {userEmail ? userEmail : null}
+          </Text>
+          <Text style={myProfile.myData}>
+            Telefon:{" "}
+            <Text
+              onPress={() => {
+                Linking.openURL("tel:" + userPhone);
+              }}
+            >
+              {userPhone ? userPhone : null}
+            </Text>
           </Text>
           <Text style={myProfile.myData}>
             Rola: {userRole ? userRole : null}

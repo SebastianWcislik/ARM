@@ -29,11 +29,13 @@ export default function ARMUserRegistration({ navigation }) {
   const [shouldDisable, setShouldDisable] = useState(true);
   const [errMessage, setErrMessage] = useState("");
   const [emailErrMessage, setEmailErrMessage] = useState("");
+  const [phoneErrMessage, setPhoneErrMessage] = useState("");
 
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [role, setRole] = useState(1);
+  const [phone, setPhone] = useState("");
 
   const GetLoggedUser = () => {
     getToken().then((res) => {
@@ -59,6 +61,21 @@ export default function ARMUserRegistration({ navigation }) {
     }
   };
 
+  const validatePhone = (phone) => {
+    setPhoneErrMessage("");
+    setPhone(phone);
+    var re = /\(?([0-9]{3})\)?([ ]?)([0-9]{3})\2([0-9]{3})/;
+    var result = re.test(phone);
+    if (result == false) {
+      setPhoneErrMessage("Wpisano niepoprawny numer telefonu");
+    }
+
+    if (result == true) {
+      setPhoneErrMessage("");
+      setErrMessage("");
+    }
+  };
+
   const IsThereUser = () => {
     fetch(serwerAdress + "/isThereUser/" + "'" + email + "'")
       .then((response) => response.json())
@@ -73,6 +90,18 @@ export default function ARMUserRegistration({ navigation }) {
   };
 
   const CreateUser = () => {
+    setErrMessage("");
+
+    if (phoneErrMessage != "") {
+      setErrMessage("Popraw błędy w polu numer telefonu");
+      return;
+    }
+
+    if (password == "" || name == "" || phone == "") {
+      setErrMessage("Uzupełnij wszystkie pola");
+      return;
+    }
+
     fetch(
       serwerAdress +
         "/createUser/" +
@@ -81,7 +110,7 @@ export default function ARMUserRegistration({ navigation }) {
         "'" +
         "/" +
         "'" +
-        name +
+        name.replace(/\s/g, "") +
         "'" +
         "/" +
         "'" +
@@ -90,6 +119,10 @@ export default function ARMUserRegistration({ navigation }) {
         "/" +
         "'" +
         role +
+        "'" +
+        "/" +
+        "'" +
+        phone +
         "'"
     )
       .then((response) => response.json())
@@ -105,6 +138,7 @@ export default function ARMUserRegistration({ navigation }) {
           setEmail("");
           setName("");
           setRole(1);
+          setPhone("");
           setShouldDisable(!shouldDisable);
           setShouldShow(!shouldShow);
           sendRegistrationEmail();
@@ -166,16 +200,33 @@ export default function ARMUserRegistration({ navigation }) {
                 />
                 <TextInput
                   style={myProfile.registrationText}
+                  placeholder="Podaj Numer telefonu użytkownika"
+                  value={phone}
+                  onChangeText={(val) => validatePhone(val)}
+                />
+                {phoneErrMessage ? (
+                  <View style={styles.errMessageStyle}>
+                    <Text style={styles.errMessageColor}>
+                      {phoneErrMessage}
+                    </Text>
+                  </View>
+                ) : null}
+                <TextInput
+                  style={myProfile.registrationText}
                   placeholder="Podaj Imię użytkownika"
                   value={name}
-                  onChangeText={(val) => setName(val)}
+                  onChangeText={(val) => {
+                    setName(val), setErrMessage("");
+                  }}
                 />
                 <TextInput
                   secureTextEntry={true}
                   style={myProfile.registrationText}
                   placeholder="Podaj tymczasowe hasło"
                   value={password}
-                  onChangeText={(val) => setPassword(val)}
+                  onChangeText={(val) => {
+                    setPassword(val), setErrMessage("");
+                  }}
                 />
                 <Picker
                   selectedValue={role}
